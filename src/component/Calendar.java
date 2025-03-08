@@ -1,9 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package form;
+package component;
 
+import form.DaySchedule;
+import form.MainForm;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,8 +22,12 @@ import javax.swing.JPanel;
 import swing.DayLabel;
 
 public class Calendar extends JPanel {
-    public Calendar(int year, int month, LocalDate selectedDay, JPanel parentPanel) {
-        setPreferredSize(new Dimension(400, 400));
+    private MainForm mainForm;  // Biến lưu MainForm
+
+    public Calendar(int year, int month, LocalDate selectedDay, MainForm mainForm, JPanel parentPanel) {
+        this.mainForm = mainForm;  // Gán mainForm vào biến của lớp
+
+        setPreferredSize(new Dimension(380, 380));
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 0));
         setBackground(null);
@@ -47,9 +49,9 @@ public class Calendar extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 parentPanel.removeAll();
                 if (month != 1) {
-                    resetMainPanel(parentPanel, selectedDay, new Calendar(year, month - 1, selectedDay, parentPanel));
+                    resetMainPanel(parentPanel, selectedDay, new Calendar(year, month - 1, selectedDay, mainForm, parentPanel));
                 } else {
-                    resetMainPanel(parentPanel, selectedDay, new Calendar(year - 1, 12, selectedDay, parentPanel));
+                    resetMainPanel(parentPanel, selectedDay, new Calendar(year - 1, 12, selectedDay, mainForm, parentPanel));
                 }
             }
             public void mousePressed(MouseEvent e) {}
@@ -65,9 +67,9 @@ public class Calendar extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (month != 12) {
-                    resetMainPanel(parentPanel, selectedDay, new Calendar(year, month + 1, selectedDay, parentPanel));
+                    resetMainPanel(parentPanel, selectedDay, new Calendar(year, month + 1, selectedDay, mainForm, parentPanel));
                 } else {
-                    resetMainPanel(parentPanel, selectedDay, new Calendar(year + 1, 1, selectedDay, parentPanel));
+                    resetMainPanel(parentPanel, selectedDay, new Calendar(year + 1, 1, selectedDay, mainForm, parentPanel));
                 }
             }
             public void mousePressed(MouseEvent e) {}
@@ -81,7 +83,7 @@ public class Calendar extends JPanel {
         JPanel days = new JPanel(new GridLayout(7, 7));
         days.setBackground(null);
 
-        Color header = Color.decode("#aa6231");
+        Color header = Color.decode("#66CCFF");
         days.add(new DayLabel("S", header, Color.white, false));
         days.add(new DayLabel("M", header, Color.white, false));
         days.add(new DayLabel("T", header, Color.white, false));
@@ -109,8 +111,17 @@ public class Calendar extends JPanel {
             dayLabel.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    LocalDate selected = LocalDate.of(year, month, day);
-                    resetMainPanel(parentPanel, selected, new Calendar(year, month, selected, parentPanel));
+                     LocalDate selected = LocalDate.of(year, month, day);
+                    resetMainPanel(parentPanel, selected, new Calendar(year, month, selected, mainForm, parentPanel));
+                  
+                    parentPanel.removeAll();  // Xóa các panel cũ trong mainPanel
+
+                    // Tạo DaySchedule mới và thêm vào mainPanel
+                    DaySchedule daySchedule = new DaySchedule( mainForm,selected);
+                    parentPanel.add(daySchedule, new GridBagConstraints());
+
+                    parentPanel.revalidate();
+                    parentPanel.repaint();
                 }
                 public void mousePressed(MouseEvent e) {}
                 public void mouseReleased(MouseEvent e) {}
@@ -125,30 +136,27 @@ public class Calendar extends JPanel {
         add(days, BorderLayout.CENTER);
     }
 
- private static void resetMainPanel(JPanel mainPanel, LocalDate selectedDay, Calendar newCalendar) {
-    Component[] components = mainPanel.getComponents();
-    
-    for (Component comp : components) {
-        if (comp instanceof Calendar) { 
-            mainPanel.remove(comp); // Chỉ xóa Calendar cũ
-            break;
+    private static void resetMainPanel(JPanel mainPanel, LocalDate selectedDay, Calendar newCalendar) {
+        Component[] components = mainPanel.getComponents();
+        
+        for (Component comp : components) {
+            if (comp instanceof Calendar) { 
+                mainPanel.remove(comp); // Chỉ xóa Calendar cũ
+                break;
+            }
         }
+
+        // Thêm Calendar mới
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 1; // Đặt Calendar ở dòng thứ 2, dưới tiêu đề
+        constraints.weightx = 1;
+        constraints.weighty = 1;
+        constraints.fill = GridBagConstraints.BOTH;
+
+        mainPanel.add(newCalendar, constraints);
+
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
-
-    // Thêm Calendar mới
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.gridx = 0;
-    constraints.gridy = 1; // Đặt Calendar ở dòng thứ 2, dưới tiêu đề
-    constraints.weightx = 1;
-    constraints.weighty = 1;
-    constraints.fill = GridBagConstraints.BOTH;
-
-    mainPanel.add(newCalendar, constraints);
-
-    mainPanel.revalidate();
-    mainPanel.repaint();
-}
-
-
-
 }

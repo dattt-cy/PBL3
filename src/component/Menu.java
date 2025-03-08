@@ -129,6 +129,7 @@ public class Menu extends javax.swing.JPanel {
         sp.setBorder(null);
         sp.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+        panel.setBackground(new java.awt.Color(153, 255, 255));
         panel.setOpaque(false);
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
@@ -166,8 +167,11 @@ public class Menu extends javax.swing.JPanel {
     @Override
     protected void paintComponent(Graphics grphcs) {
     Graphics2D g2 = (Graphics2D) grphcs;
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    GradientPaint gra = new GradientPaint(0, 0, new Color(33, 105, 249), getWidth(), 0, new Color(93, 58, 196));
+      GradientPaint gra = new GradientPaint(
+        0, 0, new Color(60, 40, 75),          // Màu tím đen
+        (int)(getWidth() * 0.85), 0,          // Điểm chuyển màu (85% màn hình)
+        new Color(143, 137, 183)              // Màu tím nhạt
+    );
     g2.setPaint(gra);
     g2.fillRect(0, 0, getWidth(), getHeight());
     super.paintComponent(grphcs);

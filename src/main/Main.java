@@ -54,7 +54,7 @@ public class Main extends javax.swing.JFrame {
                 if (menuIndex == 0) {
                     if (subMenuIndex == 0) {
                         LocalDate today = LocalDate.now();
-                        main.showForm(new Form_Home(today));
+                        main.showForm(new Form_Home(main,today));
                         
                     
                 }
@@ -130,7 +130,7 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        bg.setBackground(new java.awt.Color(255, 255, 255));
+        bg.setBackground(new java.awt.Color(199, 215, 251));
 
         javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
         bg.setLayout(bgLayout);
