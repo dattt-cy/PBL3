@@ -2,9 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package component;
-import form.MainForm;
-import form.TaskEditor;
+package form;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

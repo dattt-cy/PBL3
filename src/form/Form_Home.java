@@ -1,7 +1,5 @@
 package form;
 
-import component.Tasks;
-import component.Calendar;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;

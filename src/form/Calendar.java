@@ -1,7 +1,5 @@
-package component;
+package form;
 
-import form.DaySchedule;
-import form.MainForm;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
