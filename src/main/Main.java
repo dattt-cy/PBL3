@@ -10,6 +10,7 @@ import component.Menu;
 import event.EventMenuSelected;
 import event.EventShowPopupMenu;
 import form.MainForm;
+import form.TrangChu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +59,9 @@ public class Main extends javax.swing.JFrame {
                         
                     
                 }
+                    else if(subMenuIndex == 1){
+                        main.showForm(new TrangChu());
+                    }
                 }}
             
             

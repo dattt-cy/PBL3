@@ -29,7 +29,7 @@ public class DayScheduleTasks extends JPanel {
     public DayScheduleTasks(LocalDate date, MainForm frame, JPanel parentPanel) {
 
         // Set up tasks panel
-        setPreferredSize(new Dimension(1000, 700));
+        setPreferredSize(new Dimension(1500, 1300));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(("dd-MM-yyyy"));
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
