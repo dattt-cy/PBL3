@@ -29,7 +29,7 @@ public class DayScheduleTasks extends JPanel {
     public DayScheduleTasks(LocalDate date, MainForm frame, JPanel parentPanel) {
 
         // Set up tasks panel
-        setPreferredSize(new Dimension(1500, 1300));
+        setPreferredSize(new Dimension(2000, 1300));
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(("dd-MM-yyyy"));
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -128,12 +128,13 @@ public class DayScheduleTasks extends JPanel {
      * createHeaderLabel - Creates the header label for the task table
      */
     private JLabel createHeaderLabel(String label) {
-        JLabel headerLabel = new JLabel(label);
+      JLabel headerLabel = new JLabel(label);
         headerLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
         headerLabel.setForeground(Color.WHITE);
         headerLabel.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         return headerLabel;
-    }
+}
+
 
     /**
      * createBodyLabel - Creates the label which is used in the task body

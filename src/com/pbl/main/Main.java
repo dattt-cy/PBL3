@@ -2,12 +2,14 @@ package com.pbl.main;
 
 import com.pbl.component.Header;
 import com.pbl.component.Menu;
+import com.pbl.component.ThoiKhoaBieu;
 import com.pbl.event.EventMenuSelected;
 import com.pbl.event.EventShowPopupMenu;
 import com.pbl.form.Form1;
 import com.pbl.form.Form2;
 import com.pbl.form.Form_Home;
 import com.pbl.form.MainForm;
+import com.pbl.form.Test;
 import com.pbl.swing.MenuItem;
 import com.pbl.swing.PopupMenu;
 
@@ -51,6 +53,8 @@ public class Main extends javax.swing.JFrame {
                         main.showForm(new Form2(main,today));
                     } else if(subMenuIndex == 2){
                         main.showForm(new Form1());
+                    } else if(subMenuIndex == 3){
+                        main.showForm(new ThoiKhoaBieu());
                     }
                    
                 }
