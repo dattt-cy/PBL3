@@ -8,54 +8,55 @@ import java.time.format.DateTimeFormatter;
 
 public class DaySchedule extends JPanel {
 
-    public DaySchedule(MainForm main_form, LocalDate selectedDay) {  
-        setPreferredSize(new Dimension(1000, 650));
-        setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
-        setLayout(new GridBagLayout());
-        setBackground(null);
+    public DaySchedule(MainForm main_form, LocalDate selectedDay) {
+    setPreferredSize(new Dimension(1000, 650));
+    setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+    setLayout(new GridBagLayout());
+    setBackground(null);
 
-        // Định dạng ngày tháng phù hợp với database
-        DateTimeFormatter dbDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = selectedDay.format(dbDateFormatter);
+    // Tạo đối tượng GridBagConstraints để quản lý bố cục
+    GridBagConstraints constraints = new GridBagConstraints();
+    constraints.fill = GridBagConstraints.BOTH;
+    constraints.insets = new Insets(5, 15, 5, 15);
 
-        // Hiển thị ngày tháng trên đầu
-        JLabel todayLabel = createHeader(selectedDay, main_form);
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.weighty = 0.2;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = 2;
-        constraints.insets = new Insets(5, 15, 5, 5);
-        add(todayLabel, constraints);
+    // ========== Hàng 0: Tiêu đề ==========
+    constraints.gridx = 0;
+    constraints.gridy = 0;
+    constraints.gridwidth = 2;        // Tiêu đề chiếm 2 cột
+    constraints.weightx = 1.0;        // Dàn đều theo chiều ngang
+    constraints.weighty = 0.0;        // Không chiếm thêm chiều cao
+    JLabel todayLabel = createHeader(selectedDay, main_form);
+    add(todayLabel, constraints);
 
-        // Bảng nhiệm vụ
-        constraints.gridwidth = 1;
-        constraints.weightx = 0.8;
-        constraints.weighty = 10;
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        DayScheduleTasks tasks = new DayScheduleTasks(selectedDay, main_form, this);
-        add(tasks, constraints);
+    // ========== Hàng 1: Bảng nhiệm vụ (bên trái) ==========
+    constraints.gridx = 0;
+    constraints.gridy = 1;
+    constraints.gridwidth = 1;        // Quay lại 1 cột
+    constraints.weightx = 0.995;        // Tasks chiếm 60% chiều rộng
+    constraints.weighty = 1.0;        // Chiếm phần lớn chiều cao
+    DayScheduleTasks tasks = new DayScheduleTasks(selectedDay, main_form, this);
+    add(tasks, constraints);
 
-        // Khu vực ghi chú
-       constraints.fill = GridBagConstraints.BOTH; // Cho phép mở rộng toàn bộ
-constraints.weightx = 2;  // Tăng độ rộng
-constraints.weighty = 10;  // Tăng chiều cao
-constraints.gridx = 1;
-constraints.gridy = 1;
-JPanel notesPanel = createNotesSection();
-add(notesPanel, constraints);
+    // ========== Hàng 1: Khu vực ghi chú (bên phải) ==========
+    constraints.gridx = 1;
+    constraints.gridy = 1;
+    constraints.gridwidth = 1;
+    constraints.weightx = 0.005;        // Notes chiếm 40% chiều rộng
+    constraints.weighty = 1.0;
+    JPanel notesPanel = createNotesSection();
+    add(notesPanel, constraints);
 
-   
+    // ========== Hàng 2: Câu nói động lực (bên dưới) ==========
+    constraints.gridx = 0;
+    constraints.gridy = 2;
+    constraints.gridwidth = 2;        // Chiếm 2 cột
+    constraints.weightx = 1.0;
+    constraints.weighty = 0.0;        // Không chiếm thêm chiều cao
+    constraints.insets = new Insets(10, 15, 10, 15); // Lề dưới
+    JTextArea quoteLabel = createQuoteLabel();
+    add(quoteLabel, constraints);
+}
 
-        // Hiển thị câu nói động lực
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.insets = new Insets(20, 35, 0, 0);
-        JTextArea quoteLabel = createQuoteLabel();
-        add(quoteLabel, constraints);
-    }
 
     // Tạo tiêu đề hiển thị ngày tháng
     private JLabel createHeader(LocalDate selectedDay, MainForm main_form) {
@@ -81,7 +82,7 @@ add(notesPanel, constraints);
     // Khu vực ghi chú
  private JPanel createNotesSection() {
         JPanel textAreaPanel = new JPanel(new BorderLayout());
-        textAreaPanel.setMinimumSize(new Dimension(250, 250)); // Giữ cho nó lớn
+        textAreaPanel.setMinimumSize(new Dimension(150, 150)); // Giữ cho nó lớn
         textAreaPanel.setBackground(Color.LIGHT_GRAY);
 
         JLabel notesLabel = new JLabel("Notes:");

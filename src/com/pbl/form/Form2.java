@@ -4,6 +4,7 @@
  */
 package com.pbl.form;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -21,16 +22,28 @@ import javax.swing.JPanel;
  * @author ADMIN
  */
 public class Form2 extends JPanel{
+    private static Form2 currentInstance;
+    private MainForm mainForm;
+    private JPanel tasksPanel;
+    public Form2(MainForm frame) {
+       
+        this(frame, LocalDate.now());
+    }
+    public static Form2 getInstance() {
+        return currentInstance;
+    }
+    
+    
      public Form2(MainForm frame, LocalDate selectedDay) {
-
-        // Set up home panel
+        this.mainForm = frame;
+         currentInstance = this;
+      
         setPreferredSize(new Dimension(900, 500));
         setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         setLayout(new GridBagLayout());
         setBackground(new Color(199, 215, 251));
         
 
-        // Get current date and show on the top of the panel
         LocalDate date = LocalDate.now();
         String dateString = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, EEEE"));
         JLabel todayLabel = new JLabel(dateString);
@@ -53,11 +66,26 @@ public class Form2 extends JPanel{
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = new Insets(0, 0, 0, 0);
+        
+        tasksPanel = new JPanel(new BorderLayout());
+           Color backgroundColor = new Color(199, 215, 251);
+        tasksPanel.setBackground(backgroundColor);
         add(new Calendar(date.getYear(), date.getMonthValue(), selectedDay, frame, this), constraints);
+        
+        
 
         // Add task to the right side of the panel
         constraints.gridx = 1;
         constraints.gridy = 1;
-        add(new Tasks(selectedDay, frame, this), constraints);
+          add(tasksPanel, constraints);
+    }
+      public void updateTasks(LocalDate selectedDay) {
+        tasksPanel.removeAll();
+        tasksPanel.add(new Tasks(selectedDay, mainForm, tasksPanel), BorderLayout.CENTER);
+        tasksPanel.revalidate();
+        tasksPanel.repaint();
+    }
+       public void onTaskUpdated(LocalDate date) {
+        updateTasks(date);  
     }
 }

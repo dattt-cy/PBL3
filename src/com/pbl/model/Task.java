@@ -154,6 +154,9 @@ public class Task {
      * @param time The string value of a time
      */
     public void setTime(String time) {
-        this.dateTime = LocalDateTime.of(dateTime.toLocalDate(), LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm")));
+           LocalDate oldDate = (this.dateTime != null) ? this.dateTime.toLocalDate() : LocalDate.now();
+    LocalTime newLocalTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+    this.dateTime = LocalDateTime.of(oldDate, newLocalTime);
+      
     }
 }
