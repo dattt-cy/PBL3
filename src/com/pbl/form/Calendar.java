@@ -80,7 +80,7 @@ public class Calendar extends JPanel {
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
 
-        // Panel ngày: 7x7 grid
+       
         JPanel days = new JPanel(new GridLayout(7, 7));
         days.setBackground(null);
 
