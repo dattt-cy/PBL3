@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class Task {
     private int ID;
+    private int userId;   
     private String title;
     private String description;
     private String category;
@@ -47,7 +48,8 @@ public class Task {
      *
      * @param date The date of the task
      */
-    public Task(LocalDate date) {
+    public Task(int userID,LocalDate date) {
+        this.userId = userID;
         this.dateTime = LocalDateTime.of(date, LocalTime.now());
     }
 
@@ -159,4 +161,21 @@ public class Task {
     this.dateTime = LocalDateTime.of(oldDate, newLocalTime);
       
     }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public boolean isIsDone() {
+        return isDone;
+    }
+
+    public void setIsDone(boolean isDone) {
+        this.isDone = isDone;
+    }
+    
 }

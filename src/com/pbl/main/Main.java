@@ -9,7 +9,6 @@ import com.pbl.form.Form1;
 import com.pbl.form.Form2;
 import com.pbl.form.Form_Home;
 import com.pbl.form.MainForm;
-import com.pbl.form.Test;
 import com.pbl.swing.MenuItem;
 import com.pbl.swing.PopupMenu;
 
@@ -51,12 +50,13 @@ public class Main extends javax.swing.JFrame {
                         main.showForm(new Form_Home());
                     } else if (subMenuIndex == 1) {
                          LocalDate today = LocalDate.now();
-                        main.showForm(new Form2(main,today));
+                             int userId = 1;
+                        main.showForm(new Form2(main,today, userId));
                     } else if(subMenuIndex == 2){
                         main.showForm(new Form1());
                     } else if(subMenuIndex == 3){
                         main.showForm(new ThoiKhoaBieu());
-                    }
+                    } 
                    
                 }
             }
