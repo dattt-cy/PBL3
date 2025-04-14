@@ -29,7 +29,6 @@ public class AuthService {
         String salt = user.getSalt();
         String hashedInput = PasswordUtils.hashPassword(password, salt);
         if(hashedInput.equals(user.getPassword())){
-            user.setLastLogin(LocalDateTime.now());
             System.out.println("Đăng nhập thành công");
             return user;
         }else{

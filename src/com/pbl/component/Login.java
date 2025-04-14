@@ -5,8 +5,15 @@
  */
 package com.pbl.component;
 
+import com.pbl.form.Form2;
+import com.pbl.form.MainForm;
+import com.pbl.main.Main;
+import com.pbl.model.Users;
+import com.pbl.service.AuthService;
 import java.awt.event.ActionListener;
 import com.pbl.swing.*;
+import java.time.LocalDate;
+
 /**
  *
  * @author RAVEN
@@ -16,8 +23,10 @@ public class Login extends javax.swing.JPanel {
     /**
      * Creates new form Login
      */
-    public Login() {
+    public Login(ActionListener login) {
         initComponents();
+        addMyButton1Action(login);
+
     }
 
     public void login() {
@@ -27,6 +36,26 @@ public class Login extends javax.swing.JPanel {
     public void addEventRegister(ActionListener event) {
         cmdRegister.addActionListener(event);
     }
+
+    public com.pbl.swing.MyPassword getTxtPass() {
+        return txtPass;
+    }
+
+    public void setTxtPass(com.pbl.swing.MyPassword txtPass) {
+        this.txtPass = txtPass;
+    }
+
+    public com.pbl.swing.MyTextField getTxtUser() {
+        return txtUser;
+    }
+
+    public void setTxtUser(com.pbl.swing.MyTextField txtUser) {
+        this.txtUser = txtUser;
+    }
+    public void addMyButton1Action(ActionListener event) {
+        myButton1.addActionListener(event);
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,6 +93,11 @@ public class Login extends javax.swing.JPanel {
 
         myButton1.setBackground(new java.awt.Color(102, 174, 242));
         myButton1.setText("Login");
+        myButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -101,6 +135,10 @@ public class Login extends javax.swing.JPanel {
                 .addGap(30, 30, 30))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+
+    }//GEN-LAST:event_myButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

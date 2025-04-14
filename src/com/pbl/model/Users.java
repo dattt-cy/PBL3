@@ -14,9 +14,6 @@ public class Users {
     private String salt;
     private boolean status;
     private String role;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime lastLogin;
 
     
     public int getUser_id() {
@@ -61,22 +58,5 @@ public class Users {
     public void setRole(String role) {
         this.role = role;
     }
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    public LocalDateTime getLastLogin() {
-        return lastLogin;
-    }
-    public void setLastLogin(LocalDateTime lastLogin) {
-        this.lastLogin = lastLogin;
-    }
+   
 }

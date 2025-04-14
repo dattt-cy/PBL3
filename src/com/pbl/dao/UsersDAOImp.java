@@ -59,11 +59,6 @@ public class UsersDAOImp implements UsersDAO {
         u.setSalt(rs.getString("salt"));
         u.setStatus(rs.getBoolean("status"));
         u.setRole(rs.getString("role"));
-        u.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        u.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        if(rs.getTimestamp("last_login") != null) {
-            u.setLastLogin(rs.getTimestamp("last_login").toLocalDateTime());
-        }
         return u;
     }
 

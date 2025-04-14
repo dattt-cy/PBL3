@@ -16,8 +16,9 @@ public class Register extends javax.swing.JPanel {
     /**
      * Creates new form Login
      */
-    public Register() {
+    public Register(ActionListener register) {
         initComponents();
+        addMyButton1Action(register);
     }
 
     public void register() {
@@ -27,7 +28,46 @@ public class Register extends javax.swing.JPanel {
     public void addEventBackLogin(ActionListener event) {
         cmdBackLogin.addActionListener(event);
     }
+     public com.pbl.swing.MyPassword getTxtPass() {
+        return txtPass;
+    }
 
+    public void setTxtPass(com.pbl.swing.MyPassword txtPass) {
+        this.txtPass = txtPass;
+    }
+
+    // Getter/Setter cho txtPass1
+    public com.pbl.swing.MyPassword getTxtPass1() {
+        return txtPass1;
+    }
+
+    public void setTxtPass1(com.pbl.swing.MyPassword txtPass1) {
+        this.txtPass1 = txtPass1;
+    }
+
+    // Getter/Setter cho txtUser
+    public com.pbl.swing.MyTextField getTxtUser() {
+        return txtUser;
+    }
+
+    public void setTxtUser(com.pbl.swing.MyTextField txtUser) {
+        this.txtUser = txtUser;
+    }
+    
+
+    // Getter/Setter cho txtUser1
+    public com.pbl.swing.MyTextField getTxtUser1() {
+        return txtUser1;
+    }
+
+    public void setTxtUser1(com.pbl.swing.MyTextField txtUser1) {
+        this.txtUser1 = txtUser1;
+    }
+    public void addMyButton1Action(ActionListener event) {
+        myButton1.addActionListener(event);
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -77,7 +117,12 @@ public class Register extends javax.swing.JPanel {
         });
 
         myButton1.setBackground(new java.awt.Color(62, 217, 217));
-        myButton1.setText("Login");
+        myButton1.setText("Sign Up");
+        myButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                myButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -131,6 +176,10 @@ public class Register extends javax.swing.JPanel {
     private void txtUser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUser1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUser1ActionPerformed
+
+    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+        
+    }//GEN-LAST:event_myButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
