@@ -23,7 +23,7 @@ public class ThoiKhoaBieu extends javax.swing.JPanel {
         setLayout(null);
         setOpaque(false);
         
-        // Ô nhập "NAME" và "CLASS"
+      
         txtName = new JTextField(10);
         txtClass = new JTextField(10);
         txtName.setBounds(460, 35, 100, 25);
@@ -31,7 +31,6 @@ public class ThoiKhoaBieu extends javax.swing.JPanel {
         add(txtName);
         add(txtClass);
 
-        // Bắt sự kiện chuột để nhập dữ liệu vào bảng
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -42,7 +41,7 @@ public class ThoiKhoaBieu extends javax.swing.JPanel {
                     String input = JOptionPane.showInputDialog("Nhập môn học:");
                     if (input != null) {
                         tkbData[row][col] = input;
-                        repaint(); // Vẽ lại bảng
+                        repaint(); 
                     }
                 }
             }
