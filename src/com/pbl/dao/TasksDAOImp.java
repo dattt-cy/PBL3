@@ -15,10 +15,10 @@ public class TasksDAOImp implements TasksDAO{
         dbHelper = DBHelper.getInstance();
     }
 
-    public List<Task> getTasks(String date) {
+    public List<Task> getTasks(String date, int userId) {
         List<Task> tasks = new ArrayList<>();
-        String select = "SELECT * FROM task WHERE DATE(date) = ?";
-        try (ResultSet rs = dbHelper.getRecords(select, date)) {
+        String select = "SELECT * FROM task WHERE DATE(date) = ? AND user_id = ?";
+        try (ResultSet rs = dbHelper.getRecords(select, date, userId)) {
             while (rs.next()) {
                 tasks.add(getTaskFromResultSet(rs));
             }
@@ -28,9 +28,9 @@ public class TasksDAOImp implements TasksDAO{
         return tasks;
     }
 
-    public boolean hasTasks(String date) {
-        String select = "SELECT COUNT(*) FROM task WHERE  DATE(date) = ?";
-        try (ResultSet rs = dbHelper.getRecords(select, date)) {
+   public boolean hasTasks(String date, int userId) {
+        String select = "SELECT COUNT(*) FROM task WHERE DATE(date) = ? AND user_id = ?";
+        try (ResultSet rs = dbHelper.getRecords(select, date, userId)) {
             if (rs.next()) return rs.getInt(1) > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,65 +78,20 @@ public class TasksDAOImp implements TasksDAO{
         return "";
     }
 
-    public String getNotes(String date) {
-        String select = "SELECT note FROM notes WHERE date = ?";
-        try (ResultSet rs = dbHelper.getRecords(select, date)) {
-            if (rs.next()) return rs.getString("note");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    public void createOrUpdateNotes(String date, String note) {
-        String insertOrUpdate = "INSERT INTO notes (date, note) VALUES (?, ?) ON DUPLICATE KEY UPDATE note = VALUES(note)";
-        try {
-            dbHelper.executeUpdate(insertOrUpdate, date, note);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Task getTaskFromResultSet(ResultSet rs) throws SQLException {
-    Task t = new Task();
-    // Thay "ID" thành "task_id"
-    t.setID(rs.getInt("task_id"));
-
-    // Thay "Title" thành "task_name"
-    t.setTitle(rs.getString("task_name"));
-
-    // "Description" -> "description" (viết thường)
-    t.setDescription(rs.getString("description"));
-
-    // "Category" -> "category"
-    t.setCategory(rs.getString("category"));
-
-    // "isDone" -> "status" (bạn lưu kiểu BIT; 0 hoặc 1)
-    // JDBC cho phép getBoolean("status") nếu cột kiểu BIT hoặc TINYINT
-    t.setDone(rs.getBoolean("status"));
-
-    // Thay vì "Date" + "Time", bảng của bạn có "due_date" (DATETIME).
-    // Bạn có thể lấy Timestamp rồi chuyển thành LocalDateTime
-    Timestamp ts = rs.getTimestamp("date");
-    if (ts != null) {
-          t.setDateTime(LocalDateTime.ofInstant(ts.toInstant(), ZoneId.systemDefault()));
-    }
-    return t;
-}
-
-    @Override
-    public boolean hasNotes(String date) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Task t = new Task();
+        t.setID(rs.getInt("task_id"));
+        t.setUserId(rs.getInt("user_id"));
+        t.setTitle(rs.getString("task_name"));
+        t.setDescription(rs.getString("description"));
+        t.setCategory(rs.getString("category"));
+        t.setDone(rs.getBoolean("status"));
+        Timestamp ts = rs.getTimestamp("date");
+        if (ts != null) {
+            t.setDateTime(LocalDateTime.ofInstant(ts.toInstant(), ZoneId.systemDefault()));
+        }
+        return t;
     }
 
-    @Override
-    public void createOrUpdateNotes() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void updateNotes(String date, String note) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
+   
 }
