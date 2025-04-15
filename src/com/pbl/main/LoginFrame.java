@@ -87,8 +87,6 @@ public class LoginFrame extends javax.swing.JFrame {
             Main showMain = new Main();
             showMain.setVisible(true);
 
-            javax.swing.JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
-
             this.dispose();
 
         } else {
@@ -103,7 +101,7 @@ public class LoginFrame extends javax.swing.JFrame {
         String confirmPassword = new String(register.getTxtPass1().getPassword()).trim();
         String email = register.getTxtUser1().getText().trim();
 
-        // Kiểm tra cơ bản
+       
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -117,9 +115,6 @@ public class LoginFrame extends javax.swing.JFrame {
             AuthService authService = new AuthService();
             authService.register(name, email, password, "user");
             JOptionPane.showMessageDialog(this, "Đăng ký thành công! Vui lòng đăng nhập.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            // Sau khi đăng ký thành công, bạn có thể chuyển về giao diện đăng nhập
-            // Ví dụ: gọi event chuyển về login (nếu cmdBackLogin được sử dụng cho chức năng này)
-            // Hoặc bạn có thể xử lý chuyển giao giao diện theo logic của ứng dụng.
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Đăng ký thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }

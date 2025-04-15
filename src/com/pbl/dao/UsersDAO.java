@@ -11,6 +11,20 @@ import com.pbl.model.Users;
  * @author ADMIN
  */
 public interface UsersDAO {
-   Users getUserByEmai(String email);
-   void createUser(Users user);
+
+    Users getUserByEmai(String email);
+
+    void createUser(Users user);
+
+    String generateVerifyCode();
+
+    boolean checkDuplicateCode(String code);
+
+    boolean checkDuplicateUser(String user);
+
+    boolean checkDuplicateEmail(String user);
+
+    void doneVerify(int userID);
+
+    boolean verifyCodeWithUser(int userID, String code);
 }
