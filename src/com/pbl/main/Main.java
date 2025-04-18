@@ -5,7 +5,7 @@ import com.pbl.component.Menu;
 import com.pbl.component.ThoiKhoaBieu;
 import com.pbl.event.EventMenuSelected;
 import com.pbl.event.EventShowPopupMenu;
-import com.pbl.form.Clock;
+import com.pbl.form.Clockk;
 import com.pbl.form.Form1;
 import com.pbl.form.Form2;
 import com.pbl.form.Form_Home;
@@ -59,7 +59,7 @@ public class Main extends javax.swing.JFrame {
                         main.showForm(new ThoiKhoaBieu());
                     }
                     else if(subMenuIndex == 4){
-                        main.showForm(new Clock());
+                        main.showForm(new Clockk());
                     }
                 }
             }
