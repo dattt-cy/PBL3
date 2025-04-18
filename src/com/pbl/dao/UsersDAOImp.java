@@ -63,6 +63,7 @@ public class UsersDAOImp implements UsersDAO {
         u.setSalt(rs.getString("salt"));
         u.setStatus(rs.getBoolean("status"));
         u.setRole(rs.getString("role"));
+        u.setVerifyCode(rs.getString("verifyCode")); 
         return u;
     }
 
@@ -94,7 +95,7 @@ public class UsersDAOImp implements UsersDAO {
 
     @Override
     public boolean checkDuplicateUser(String user) {
-        String sql = "SELECT user_id FROM `users` WHERE username = ? AND `status` = 1 LIMIT 1";
+        String sql = "SELECT user_id FROM `users` WHERE username = ? LIMIT 1";
         try {
             ResultSet rs = dbHelper.getRecords(sql, user);
             if (rs.next()) {
@@ -109,7 +110,7 @@ public class UsersDAOImp implements UsersDAO {
 
     @Override
     public boolean checkDuplicateEmail(String user) {
-        String sql = "SELECT user_id FROM `users` WHERE email = ? AND `status` = 1 LIMIT 1";
+        String sql = "SELECT user_id FROM `users` WHERE email = ? LIMIT 1";
         try {
             ResultSet rs = dbHelper.getRecords(sql, user);
             if (rs.next()) {

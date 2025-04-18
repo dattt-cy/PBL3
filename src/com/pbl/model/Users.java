@@ -14,7 +14,7 @@ public class Users {
     private String salt;
     private boolean status;
     private String role;
-    private int verifyCode;
+    private String verifyCode;
 
     
     public int getUser_id() {
@@ -60,13 +60,15 @@ public class Users {
         this.role = role;
     }
 
-    public int getVerifyCode() {
+    public String getVerifyCode() {
         return verifyCode;
     }
 
-    public void setVerifyCode(int verifyCode) {
+    public void setVerifyCode(String verifyCode) {
         this.verifyCode = verifyCode;
     }
+
+   
     
    
 }

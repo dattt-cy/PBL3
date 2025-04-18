@@ -5,6 +5,8 @@
  */
 package com.pbl.component;
 
+import com.pbl.model.Users;
+import com.pbl.service.UserService;
 import java.awt.event.ActionListener;
 
 /**
@@ -16,7 +18,9 @@ public class Register extends javax.swing.JPanel {
     /**
      * Creates new form Login
      */
+    private UserService userS;
     public Register(ActionListener register) {
+        userS= new UserService();
         initComponents();
         addMyButton1Action(register);
     }
@@ -28,6 +32,9 @@ public class Register extends javax.swing.JPanel {
     public void addEventBackLogin(ActionListener event) {
         cmdBackLogin.addActionListener(event);
     }
+    public void addEventVerify(ActionListener event){
+        myButton1.addActionListener(event);
+    }
      public com.pbl.swing.MyPassword getTxtPass() {
         return txtPass;
     }
@@ -35,7 +42,9 @@ public class Register extends javax.swing.JPanel {
     public void setTxtPass(com.pbl.swing.MyPassword txtPass) {
         this.txtPass = txtPass;
     }
-
+    public Users getUser(){
+        return userS.getUserByEmail(txtUser1.getText());
+    }
     // Getter/Setter cho txtPass1
     public com.pbl.swing.MyPassword getTxtPass1() {
         return txtPass1;
@@ -53,13 +62,15 @@ public class Register extends javax.swing.JPanel {
     public void setTxtUser(com.pbl.swing.MyTextField txtUser) {
         this.txtUser = txtUser;
     }
-    
+    public void setMessage(String mess){
+        notif.setText(mess);
+    }
 
     // Getter/Setter cho txtUser1
     public com.pbl.swing.MyTextField getTxtUser1() {
         return txtUser1;
     }
-
+   
     public void setTxtUser1(com.pbl.swing.MyTextField txtUser1) {
         this.txtUser1 = txtUser1;
     }
@@ -88,6 +99,7 @@ public class Register extends javax.swing.JPanel {
         txtUser1 = new com.pbl.swing.MyTextField();
         txtPass1 = new com.pbl.swing.MyPassword();
         myButton1 = new com.pbl.swing.MyButton();
+        notif = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -124,6 +136,8 @@ public class Register extends javax.swing.JPanel {
             }
         });
 
+        notif.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,7 +155,8 @@ public class Register extends javax.swing.JPanel {
                     .addComponent(txtPass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtPass1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtUser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(myButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(myButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(notif, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -167,9 +182,11 @@ public class Register extends javax.swing.JPanel {
                 .addComponent(txtUser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(notif, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
                 .addComponent(cmdBackLogin)
-                .addGap(30, 30, 30))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -190,6 +207,7 @@ public class Register extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private com.pbl.swing.MyButton myButton1;
+    private javax.swing.JLabel notif;
     private com.pbl.swing.MyPassword txtPass;
     private com.pbl.swing.MyPassword txtPass1;
     private com.pbl.swing.MyTextField txtUser;

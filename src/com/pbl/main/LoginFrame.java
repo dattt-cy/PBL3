@@ -6,17 +6,23 @@
 package com.pbl.main;
 
 import com.pbl.component.Login;
+import com.pbl.component.PanelVerifyCode;
 import com.pbl.component.Register;
+import com.pbl.dao.UsersDAO;
+import com.pbl.dao.UsersDAOImp;
 import com.pbl.form.Form2;
 import com.pbl.form.MainForm;
 import com.pbl.model.Users;
 import com.pbl.service.AuthService;
+import com.pbl.service.UserService;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  *
@@ -29,15 +35,22 @@ public class LoginFrame extends javax.swing.JFrame {
      */
     private Register register;
     private Login login;
+    private PanelVerifyCode verify;
+    private UsersDAO userDAO;
+    private UserService userService;
 
     public LoginFrame() {
         initComponents();
         setSize(599, 728);
         setLocationRelativeTo(null);
+        userDAO = new UsersDAOImp();
+        userService = new UserService();
+         verify = new PanelVerifyCode();
         ActionListener eventLogin = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 performLogin();
+                  
             }
         };
         login = new Login(eventLogin);
@@ -46,15 +59,17 @@ public class LoginFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 registerForm();
+                slide.show(2);
+                 verify.verify();
             }
         };
         register = new Register(eventRegister);
-        slide.setAnimate(5);
-        slide.init(login, register);
+       
+        slide.setAnimate(10);
+        slide.init(login, register, verify);
         login.addEventRegister(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                //  Show register form
                 slide.show(1);
                 register.register();
             }
@@ -64,6 +79,31 @@ public class LoginFrame extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent ae) {
                 slide.show(0);
                 login.login();
+
+            }
+        });
+
+        verify.addEventRegister(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                slide.show(1);
+                register.register();
+
+            }
+        });
+        verify.addEventButtonOK(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Users user = register.getUser();
+                boolean ok = userService.verifyCodeWithUser(user.getUser_id(), verify.getInputCode());
+                System.out.println(user.getUser_id());
+                
+                if (ok) {
+                    userService.doneVerify(user.getUser_id());
+                    System.out.println("Xác minh thành công");
+                } else {
+                    System.out.println("Xác minh thất bại");
+                }
             }
         });
 
@@ -101,23 +141,32 @@ public class LoginFrame extends javax.swing.JFrame {
         String confirmPassword = new String(register.getTxtPass1().getPassword()).trim();
         String email = register.getTxtUser1().getText().trim();
 
-       
+        if (userService.checkDuplicateUser(name)) {
+            register.setMessage("Username đã tồn tại.");
+            return;
+        }
+        if (userService.checkDuplicateEmail(email)) {
+            register.setMessage("Mail đã tồn tại.");
+            return;
+        }
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            register.setMessage("Vui lòng điền đầy đủ thông tin.");
             return;
         }
         if (!password.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(this, "Mật khẩu và mật khẩu xác nhận không khớp.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            register.setMessage("Mật khẩu và mật khẩu xác nhận không khớp.");
             return;
         }
 
         try {
             AuthService authService = new AuthService();
             authService.register(name, email, password, "user");
-            JOptionPane.showMessageDialog(this, "Đăng ký thành công! Vui lòng đăng nhập.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+         
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Đăng ký thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     /**
