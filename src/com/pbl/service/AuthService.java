@@ -6,6 +6,7 @@ package com.pbl.service;
 
 import com.pbl.dao.UsersDAO;
 import com.pbl.dao.UsersDAOImp;
+import com.pbl.model.ModelMessage;
 import com.pbl.model.Users;
 import com.pbl.utility.PasswordUtils;
 import java.time.LocalDateTime;
@@ -48,6 +49,18 @@ public class AuthService {
         newUser.setStatus(true);
         newUser.setRole(role);
         userDAO.createUser(newUser);
-        System.out.println("Đăng ký thành công!");
+         System.out.println(userDAO.getUserByEmai(email).getVerifyCode());
+         sendMain(userDAO.getUserByEmai(email));
     }
+      private void sendMain(Users user) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+              
+                ModelMessage ms = new MailService().sendMain(user.getEmail(),user.getVerifyCode());
+             
+            }
+        }).start();
+    }
+
 }
