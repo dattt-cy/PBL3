@@ -1,46 +1,106 @@
 package com.pbl.form;
 
-
+import com.pbl.chart.ModelChart;
 import com.pbl.main.Main;
 import com.pbl.model.ModelCard;
+import com.pbl.model.Task;
+import com.pbl.service.TaskService;
 
 import com.pbl.swing.noticeboard.ModelNoticeBoard;
 
 import java.awt.Color;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public class Form_Home extends javax.swing.JPanel {
 
-    public Form_Home() {
+    public Form_Home(int user_id) {
         initComponents();
         setOpaque(false);
-        initData();
+        initData(user_id);
     }
 
-    private void initData() {
-     
-        initNoticeBoard();
-      
+    private void initData(int user_id) {
+
+        initNoticeBoard(user_id);
+        initThongKe(user_id);
+
+    }
+    private void initThongKe(int userId){
+        chart1.addLegend("Đã hoàn thành", new Color(76, 175, 80));
+        chart1.addLegend("Chưa hoàn thành", new Color(244, 67, 54));
+        TaskService service = new TaskService();
+        for (int m = 1; m <= 6; m++) {
+            // Đếm done & pending trong tháng m
+            int doneCount = service.getCountByMonthAndStatus(userId, m, true);
+            int pendingCount = service.getCountByMonthAndStatus(userId, m, false);
+            // Lấy tên tháng (Jan, Feb,…)
+            String monthName = Month.of(m)
+                    .getDisplayName(TextStyle.SHORT, Locale.getDefault());
+            chart1.addData(new ModelChart(monthName, new double[]{doneCount, pendingCount}));
+        }
     }
 
-    
+    private void initNoticeBoard(int userId) {
 
+        TaskService taskService = new TaskService();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
+        LocalDate today = LocalDate.now();
+        List<Task> tasks = taskService.getAllTasksByUser(userId);
+        tasks.sort(Comparator.comparing(Task::getDateTime));
 
-    private void initNoticeBoard() {
-        noticeBoard.addDate("04/10/2021");
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(94, 49, 238), "Hidemode", "Now", "Sets the hide mode for the component. If the hide mode has been specified in the This hide mode can be overridden by the component constraint."));
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(218, 49, 238), "Tag", "2h ago", "Tags the component with metadata name that can be used by the layout engine. The tag can be used to explain for the layout manager what the components is showing, such as an OK or Cancel button."));
-        noticeBoard.addDate("03/10/2021");
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(32, 171, 43), "Further Reading", "12:30 PM", "There are more information to digest regarding MigLayout. The resources are all available at www.migcomponents.com"));
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(50, 93, 215), "Span", "10:30 AM", "Spans the current cell (merges) over a number of cells. Practically this means that this cell and the count number of cells will be treated as one cell and the component can use the space that all these cells have."));
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(27, 188, 204), "Skip ", "9:00 AM", "Skips a number of cells in the flow. This is used to jump over a number of cells before the next free cell is looked for. The skipping is done before this component is put in a cell and thus this cells is affected by it. \"count\" defaults to 1 if not specified."));
-        noticeBoard.addNoticeBoard(new ModelNoticeBoard(new Color(238, 46, 57), "Push", "7:15 AM", "Makes the row and/or column that the component is residing in grow with \"weight\". This can be used instead of having a \"grow\" keyword in the column/row constraints."));
+        boolean printedToday = false;
+        for (Task task : tasks) {
+            if (task.getDateTime().toLocalDate().equals(today)) {
+                if (!printedToday) {
+                    noticeBoard.addDate(today.format(dateFormatter));
+                    printedToday = true;
+                }
+                noticeBoard.addNoticeBoard(new ModelNoticeBoard(
+                        new Color(27, 188, 204),
+                        task.getTitle(),
+                        task.getDateTime().format(timeFormatter),
+                        task.getDescription()
+                ));
+            }
+        }
+
+        Map<LocalDate, List<Task>> overdueMap = new TreeMap<>(Comparator.reverseOrder());
+        for (Task task : tasks) {
+            LocalDate d = task.getDateTime().toLocalDate();
+            if (d.isBefore(today) && !task.isDone()) {
+                overdueMap
+                        .computeIfAbsent(d, k -> new ArrayList<>())
+                        .add(task);
+            }
+        }
+
+        for (Map.Entry<LocalDate, List<Task>> e : overdueMap.entrySet()) {
+            noticeBoard.addDate(e.getKey().format(dateFormatter));
+            for (Task task : e.getValue()) {
+                noticeBoard.addNoticeBoard(new ModelNoticeBoard(
+                        new Color(238, 46, 57),
+                        task.getTitle(),
+                        task.getDateTime().format(timeFormatter),
+                        task.getDescription()
+                ));
+            }
+        }
+
         noticeBoard.scrollToTop();
     }
-
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -56,6 +116,7 @@ public class Form_Home extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        chart1 = new com.pbl.chart.Chart();
 
         card1.setColorGradient(new java.awt.Color(211, 28, 215));
 
@@ -121,8 +182,8 @@ public class Form_Home extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(card1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -130,11 +191,12 @@ public class Form_Home extends javax.swing.JPanel {
                         .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(card4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(chart1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -150,7 +212,11 @@ public class Form_Home extends javax.swing.JPanel {
                     .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(chart1, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -160,6 +226,7 @@ public class Form_Home extends javax.swing.JPanel {
     private com.pbl.component.Card card2;
     private com.pbl.component.Card card3;
     private com.pbl.component.Card card4;
+    private com.pbl.chart.Chart chart1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

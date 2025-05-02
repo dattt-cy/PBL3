@@ -28,6 +28,9 @@ public class Login extends javax.swing.JPanel {
         addMyButton1Action(login);
 
     }
+    public void setTxtmes(String txtMes){
+        this.txtMes.setText(txtMes);
+    }
 
     public void login() {
         txtUser.grabFocus();
@@ -41,16 +44,16 @@ public class Login extends javax.swing.JPanel {
         return txtPass;
     }
 
-    public void setTxtPass(com.pbl.swing.MyPassword txtPass) {
-        this.txtPass = txtPass;
+    public void setTxtPass(String txtPass) {
+        this.txtPass.setText(txtPass);
     }
 
     public com.pbl.swing.MyTextField getTxtUser() {
         return txtUser;
     }
 
-    public void setTxtUser(com.pbl.swing.MyTextField txtUser) {
-        this.txtUser = txtUser;
+    public void setTxtUser(String txtUser) {
+        this.txtUser.setText("");
     }
     public void addMyButton1Action(ActionListener event) {
         myButton1.addActionListener(event);
@@ -73,6 +76,7 @@ public class Login extends javax.swing.JPanel {
         txtUser = new com.pbl.swing.MyTextField();
         txtPass = new com.pbl.swing.MyPassword();
         myButton1 = new com.pbl.swing.MyButton();
+        txtMes = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -99,6 +103,9 @@ public class Login extends javax.swing.JPanel {
             }
         });
 
+        txtMes.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        txtMes.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,13 +119,14 @@ public class Login extends javax.swing.JPanel {
                     .addComponent(cmdRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtPass, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(myButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(myButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtMes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(41, Short.MAX_VALUE)
+                .addContainerGap(35, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -130,7 +138,9 @@ public class Login extends javax.swing.JPanel {
                 .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtMes, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(cmdRegister)
                 .addGap(30, 30, 30))
         );
@@ -147,6 +157,7 @@ public class Login extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private com.pbl.swing.MyButton myButton1;
+    private javax.swing.JLabel txtMes;
     private com.pbl.swing.MyPassword txtPass;
     private com.pbl.swing.MyTextField txtUser;
     // End of variables declaration//GEN-END:variables

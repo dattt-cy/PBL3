@@ -39,13 +39,6 @@ public class Tasks extends JPanel {
         createTasksSection(date, mainForm, mainPanel);
     }
 
-    /**
-     * createTasksSection - Set up the panels to show the list of tasks.
-     *
-     * @param date      The selected date.
-     * @param mainForm  The main form object.
-     * @param mainPanel The parent panel object.
-     */
     private void createTasksSection(LocalDate date, MainForm mainForm, JPanel mainPanel) {
         String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -57,7 +50,6 @@ public class Tasks extends JPanel {
         list.setBackground(new Color(199, 215, 251));
         JScrollPane scrollPane = new JScrollPane(list);
 
-        // Duyệt qua danh sách tasks và tạo giao diện cho từng task
         for (int i = 0; i < tasks.size(); i++) {
             final int j = i;
             JPanel taskPanel = new JPanel(new GridLayout(2, 2));
@@ -115,8 +107,10 @@ public class Tasks extends JPanel {
         newTaskButton.addActionListener(e -> {
           
             new TaskEditor(new Task(userId, date), mainForm, mainPanel);
+            Form2.getInstance().updateTasks(date);
         });
         add(newTaskButton, BorderLayout.SOUTH);
+        
     }
 
     /**

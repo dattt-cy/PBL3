@@ -5,6 +5,7 @@ import com.pbl.component.Menu;
 import com.pbl.component.ThoiKhoaBieu;
 import com.pbl.event.EventMenuSelected;
 import com.pbl.event.EventShowPopupMenu;
+import com.pbl.form.ChartForm;
 import com.pbl.form.Form1;
 import com.pbl.form.Form2;
 import com.pbl.form.Form_Home;
@@ -28,8 +29,10 @@ public class Main extends javax.swing.JFrame {
     private Header header;
     private MainForm main;
     private Animator animator;
+    private int userID;
 
-    public Main() {
+    public Main(int userID) {
+        this.userID = userID;
         initComponents();
         init();
         
@@ -41,19 +44,21 @@ public class Main extends javax.swing.JFrame {
         menu = new Menu();
         header = new Header();
         main = new MainForm();
+        main.showForm(new Form_Home(userID));
+        System.out.println(userID);
         menu.addEvent(new EventMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
                 System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
                 if (menuIndex == 0) {
                     if (subMenuIndex == 0) {
-                        main.showForm(new Form_Home());
+                        main.showForm(new Form_Home(userID));
                     } else if (subMenuIndex == 1) {
                          LocalDate today = LocalDate.now();
-                             int userId = 1;
-                        main.showForm(new Form2(main,today, userId));
+                         System.out.println(userID);
+                        main.showForm(new Form2(main,today, userID));
                     } else if(subMenuIndex == 2){
-                        main.showForm(new Form1());
+                        main.showForm(new ChartForm(userID));
                     } else if(subMenuIndex == 3){
                         main.showForm(new ThoiKhoaBieu());
                     } 
@@ -114,9 +119,13 @@ public class Main extends javax.swing.JFrame {
         });
     
         //  Start with this form
-        main.showForm(new Form_Home());
+     
     }
-
+    public void setHeader(String username, String role, int UserID){
+        header.setlbUserName(username);
+        header.setlbRole(role);
+        this.userID = UserID;
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

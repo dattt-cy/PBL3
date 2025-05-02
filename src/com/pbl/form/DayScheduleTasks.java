@@ -45,6 +45,7 @@ public class DayScheduleTasks extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 // Khi tạo task mới, khởi tạo Task với userId và ngày hiện hành
                 new TaskEditor(new Task(userId, date), frame, parentPanel);
+               
             }
         });
         topPanel.add(addButton, BorderLayout.EAST);
@@ -82,6 +83,7 @@ public class DayScheduleTasks extends JPanel {
                     new TaskEditor(tasks.get(j), frame, parentPanel);
                 }
             });
+           
 
             taskPanel.add(createBodyLabel(Integer.toString(i + 1), "#000000"));
             taskPanel.add(createBodyLabel(tasks.get(i).getTimeToString(), "#000000"));

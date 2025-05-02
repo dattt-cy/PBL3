@@ -27,4 +27,6 @@ public interface UsersDAO {
     void doneVerify(int userID);
 
     boolean verifyCodeWithUser(int userID, String code);
+
+    void deleteUser(int userId);
 }

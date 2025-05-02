@@ -59,5 +59,12 @@ public class UserService {
     public boolean verifyCodeWithUser(int userID, String code) {
         return usersDAO.verifyCodeWithUser(userID, code);
     }
+    public void deleteUser(int userId) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID phải lớn hơn 0");
+        }
+        usersDAO.deleteUser(userId);
+    }
+    
     
 }

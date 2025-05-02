@@ -59,8 +59,6 @@ public class LoginFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 registerForm();
-                slide.show(2);
-                 verify.verify();
             }
         };
         register = new Register(eventRegister);
@@ -86,6 +84,8 @@ public class LoginFrame extends javax.swing.JFrame {
         verify.addEventRegister(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                Users user = register.getUser();
+                userService.deleteUser(user.getUser_id());
                 slide.show(1);
                 register.register();
 
@@ -101,6 +101,11 @@ public class LoginFrame extends javax.swing.JFrame {
                 if (ok) {
                     userService.doneVerify(user.getUser_id());
                     System.out.println("Xác minh thành công");
+                    login.setTxtUser("");
+                    login.setTxtPass("");
+                    login.setTxtmes("");
+                    slide.show(0);
+                    login.login();
                 } else {
                     System.out.println("Xác minh thất bại");
                 }
@@ -117,21 +122,25 @@ public class LoginFrame extends javax.swing.JFrame {
 
         String email = login.getTxtUser().getText().trim();
         String password = new String(login.getTxtPass().getPassword()).trim();
-
+        if(email.isEmpty() || password.isEmpty()){
+            login.setTxtmes("Vui lòng điền đầy đủ thông tin.");
+            return;
+        }
         AuthService authService = new AuthService();
 
         Users user = authService.Login(email, password);
 
         if (user != null) {
-
-            Main showMain = new Main();
+            Main showMain = new Main(user.getUser_id());
+            showMain.setHeader(user.getUsername(), "User", user.getUser_id());
             showMain.setVisible(true);
+            
 
             this.dispose();
 
         } else {
-
-            javax.swing.JOptionPane.showMessageDialog(this, "Sai email hoặc mật khẩu.", "Đăng nhập thất bại", javax.swing.JOptionPane.ERROR_MESSAGE);
+         login.setTxtmes("Sai email hoặc mật khẩu.");
+            return;
         }
     }
 
@@ -161,6 +170,8 @@ public class LoginFrame extends javax.swing.JFrame {
         try {
             AuthService authService = new AuthService();
             authService.register(name, email, password, "user");
+               slide.show(2);
+                 verify.verify();
          
 
         } catch (Exception ex) {

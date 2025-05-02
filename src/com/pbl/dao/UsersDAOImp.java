@@ -155,4 +155,15 @@ public class UsersDAOImp implements UsersDAO {
         }
         return false;
     }
+
+    @Override
+    public void deleteUser(int userId) {
+       String sql = "DELETE FROM users WHERE user_id = ?";
+          try {
+            dbHelper.executeUpdate(sql, userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // bạn có thể ném ra một exception custom ở đây nếu muốn
+        }
+    }
 }

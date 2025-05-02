@@ -173,6 +173,7 @@ public class TaskEditor {
         deleteTaskButton.addActionListener(e -> {
             if (t.getID() != 0) {
                 taskService.deleteTask(t.getID());
+                Form2.getInstance().updateTasks(t.getDate());
             }
             frame.dispose();
         });

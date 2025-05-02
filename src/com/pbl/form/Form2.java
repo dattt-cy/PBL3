@@ -17,8 +17,11 @@ public class Form2 extends JPanel {
     private static Form2 currentInstance;
     private MainForm mainForm;
     private JPanel tasksPanel;
-    private int userId; // ID của người dùng hiện hành
-
+    private int userId; 
+    
+    public void setUserID(int userId){
+        this.userId = userId;
+    }
     // Constructor khi không có ngày được truyền vào (sử dụng ngày hiện tại)
     public Form2(MainForm frame, int userId) {
         this(frame, LocalDate.now(), userId);
@@ -28,7 +31,7 @@ public class Form2 extends JPanel {
         return currentInstance;
     }
     
-    // Constructor có truyền vào ngày và userId
+  
     public Form2(MainForm frame, LocalDate selectedDay, int userId) {
         this.mainForm = frame;
         this.userId = userId;
