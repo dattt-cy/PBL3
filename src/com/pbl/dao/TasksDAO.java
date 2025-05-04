@@ -13,25 +13,11 @@ import java.util.List;
  * @author ADMIN
  */
 public interface TasksDAO {
-     public List<Task> getTasks(String date);
-
-    public boolean hasTasks(String date);
-
-    public boolean hasNotes(String date);
-
-    public void createTask(Task t);
-
-    public void deleteTask(int ID);
-
-    public void updateTask(Task t);
-
-    public String getQuote(int day);
-
-    public String getNotes(String date);
-
-    public void createOrUpdateNotes();
-
-    public void updateNotes(String date, String note);
+    List<Task> getTasks(String date, int userId);
+    boolean hasTasks(String date, int userId);
+    void createTask(Task t);
+    void deleteTask(int taskId);
+    void updateTask(Task t);
     
     
 }
