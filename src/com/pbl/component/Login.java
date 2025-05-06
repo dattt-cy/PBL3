@@ -14,10 +14,6 @@ import java.awt.event.ActionListener;
 import com.pbl.swing.*;
 import java.time.LocalDate;
 
-/**
- *
- * @author RAVEN
- */
 public class Login extends javax.swing.JPanel {
 
     /**

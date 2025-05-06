@@ -22,7 +22,6 @@ public class Form2 extends JPanel {
     public void setUserID(int userId){
         this.userId = userId;
     }
-    // Constructor khi không có ngày được truyền vào (sử dụng ngày hiện tại)
     public Form2(MainForm frame, int userId) {
         this(frame, LocalDate.now(), userId);
     }
@@ -37,16 +36,17 @@ public class Form2 extends JPanel {
         this.userId = userId;
         currentInstance = this;
       
-        setPreferredSize(new Dimension(900, 500));
+        setPreferredSize(new Dimension(1000, 600));
         setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         setLayout(new GridBagLayout());
-        setBackground(new Color(199, 215, 251));
+        setBackground(Color.decode("#E5E7E9"));
+        setOpaque(false);
         
         LocalDate date = LocalDate.now();
         String dateString = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, EEEE"));
         JLabel todayLabel = new JLabel(dateString);
         todayLabel.setFont(new Font("Helvetica", Font.BOLD, 40));
-        todayLabel.setForeground(Color.decode("#4D2508"));
+        todayLabel.setForeground(Color.decode("#3498DB")); 
         
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -65,15 +65,17 @@ public class Form2 extends JPanel {
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = new Insets(0, 0, 0, 0);
-        // Gọi Calendar với thêm userId
+      
         add(new Calendar(date.getYear(), date.getMonthValue(), selectedDay, frame, this, userId), constraints);
         
         // Add tasks panel to the right side of the panel
         constraints.gridx = 1;
         constraints.gridy = 1;
         tasksPanel = new JPanel(new BorderLayout());
-        Color backgroundColor = new Color(199, 215, 251);
-        tasksPanel.setBackground(backgroundColor);
+        tasksPanel.setBackground(Color.decode("#000000"));
+    
+        tasksPanel.setOpaque(true);
+       
         // Gọi Tasks với userId
         tasksPanel.add(new Tasks(selectedDay, mainForm, tasksPanel, userId), BorderLayout.CENTER);
         add(tasksPanel, constraints);

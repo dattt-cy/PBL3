@@ -20,9 +20,18 @@ public class ModelLegend {
         this.color = color;
     }
 
-    public ModelLegend(String name, Color color) {
+    public Color getColorLight() {
+        return colorLight;
+    }
+
+    public void setColorLight(Color colorLight) {
+        this.colorLight = colorLight;
+    }
+
+    public ModelLegend(String name, Color color, Color colorLight) {
         this.name = name;
         this.color = color;
+        this.colorLight = colorLight;
     }
 
     public ModelLegend() {
@@ -30,4 +39,5 @@ public class ModelLegend {
 
     private String name;
     private Color color;
+    private Color colorLight;
 }

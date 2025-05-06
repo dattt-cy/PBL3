@@ -132,17 +132,38 @@ public class TasksDAOImp implements TasksDAO {
     }
 
     @Override
-    public int countOverdueTasks(int userId, int month) {
-    String sql = "SELECT COUNT(*) FROM task "
-               + "WHERE user_id = ? "
-               +   "AND status = false "
-               +   "AND MONTH(date) = ? "
-               +   "AND YEAR(date) = YEAR(CURDATE())";
-    try (ResultSet rs = dbHelper.getRecords(sql, userId, month)) {
-        if (rs.next()) return rs.getInt(1);
-    } catch (SQLException e) {
-        e.printStackTrace();
+    public int countByCategoryAndMonth(int userId, String category, int month, int year) {
+        String sql = "SELECT COUNT(*) FROM task "
+                + "WHERE user_id = ? AND category = ? "
+                + "  AND MONTH(date) = ? AND YEAR(date) = ?";
+        try (ResultSet rs = dbHelper.getRecords(sql, userId, category, month, year)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
-    return 0;
+
+    @Override
+       
+
+    public int countOverdueTasks(int userId, int month) {
+        String sql = "SELECT COUNT(*) FROM task "
+                + "WHERE user_id = ? "
+                + "AND status = false "
+                + "AND MONTH(date) = ? "
+                + "AND YEAR(date) = YEAR(CURDATE())";
+        try (ResultSet rs = dbHelper.getRecords(sql, userId, month)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    
 }
+
 }

@@ -107,4 +107,24 @@ public class TaskService {
         return tasksDAO.countTasksByMonthAndStatus(userId, month, status);
     }
 
+    public int getCountByCategoryAndMonth(int userId, String category, int month, int year) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID không hợp lệ!");
+        }
+        if (category == null || category.isEmpty()) {
+            throw new IllegalArgumentException("Category không đúng!");
+        }
+        return tasksDAO.countByCategoryAndMonth(userId, category, month, year);
+    }
+
+    public int getOverdueCount(int userId, int month) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID không hợp lệ!");
+        }
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("Month phải từ 1 đến 12!");
+        }
+        return tasksDAO.countOverdueTasks(userId, month);
+    }
+
 }

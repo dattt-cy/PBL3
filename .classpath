@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="dist/lib/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/flatlaf-3.4.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/flatlaf-extras-3.4.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/flatlaf-fonts-roboto-2.137.jar"/>
+	<classpathentry kind="lib" path="dist/lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="dist/lib/jsvg-1.4.0.jar"/>
+	<classpathentry kind="lib" path="dist/lib/miglayout-4.0.jar"/>
+	<classpathentry kind="lib" path="dist/lib/mysql-driver-9.1.0-all.jar"/>
+	<classpathentry kind="lib" path="dist/lib/timingframework-1.0.jar"/>
+	<classpathentry kind="lib" path="dist/PBL3-.jar"/>
+	<classpathentry kind="lib" path="libs/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="libs/javax.mail.jar"/>
+	<classpathentry kind="lib" path="libs/miglayout-4.0.jar"/>
+	<classpathentry kind="lib" path="libs/mysql-driver-9.1.0-all.jar"/>
+	<classpathentry kind="lib" path="libs/timingframework-1.0.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

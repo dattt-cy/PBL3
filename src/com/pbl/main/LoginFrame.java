@@ -132,7 +132,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         if (user != null) {
             Main showMain = new Main(user.getUser_id());
-            showMain.setHeader(user.getUsername(), "User", user.getUser_id());
+           
             showMain.setVisible(true);
             
 
@@ -190,7 +190,7 @@ public class LoginFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         panelGradiente1 = new com.pbl.swing.PanelGradiente();
-        panelBorder1 = new com.pbl.swing.PanelBorder();
+        panelBorder1 = new com.pbl.swing.PanelBorder2();
         slide = new com.pbl.swing.PanelSlide();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -297,7 +297,7 @@ public class LoginFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.pbl.swing.PanelBorder panelBorder1;
+    private com.pbl.swing.PanelBorder2 panelBorder1;
     private com.pbl.swing.PanelGradiente panelGradiente1;
     private com.pbl.swing.PanelSlide slide;
     // End of variables declaration//GEN-END:variables

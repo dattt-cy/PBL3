@@ -1,5 +1,6 @@
 package com.pbl.form;
 
+import com.pbl.main.Main;
 import com.pbl.service.NoteService;
 import com.pbl.service.QuoteService;
 import javax.swing.*;
@@ -10,71 +11,68 @@ import java.time.format.DateTimeFormatter;
 
 public class DaySchedule extends JPanel {
 
-    // Constructor bây giờ nhận thêm tham số userId
     public DaySchedule(MainForm main_form, LocalDate selectedDay, int userId) {
-        setPreferredSize(new Dimension(1000, 650));
+        // Set light gray background for the entire panel
+        setBackground(Color.decode("#E3F2FD"));
+        setOpaque(true);
+        setPreferredSize(new Dimension(970, 570));
         setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         setLayout(new GridBagLayout());
-        setBackground(null);
 
-        // Tạo đối tượng GridBagConstraints chung cho panel
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.insets = new Insets(5, 15, 5, 15);
 
-        // ========== Hàng 0: Tiêu đề (Header) ==========
+        // Header row: date title
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.gridwidth = 2;          // Header chiếm 2 cột
+        constraints.gridwidth = 2;
         constraints.weightx = 1.0;
         constraints.weighty = 0.0;
         JLabel todayLabel = createHeader(selectedDay, main_form, userId);
         add(todayLabel, constraints);
 
-        // ========== Hàng 1: Bảng nhiệm vụ và khu vực ghi chú ==========
-        // Phần nhiệm vụ (Tasks)
+        // Row 1: Tasks table
         constraints.gridx = 0;
         constraints.gridy = 1;
-        constraints.gridwidth = 1;          // Chiếm 1 cột
-        constraints.weightx = 0.995;        // Tasks chiếm phần lớn chiều rộng bên trái
+        constraints.gridwidth = 1;
+        constraints.weightx = 0.995;
         constraints.weighty = 1.0;
-        // Truyền thêm userId cho DayScheduleTasks
         DayScheduleTasks tasks = new DayScheduleTasks(selectedDay, main_form, this, userId);
         add(tasks, constraints);
 
-        // Phần ghi chú (Notes)
+        // Row 1: Notes panel
         constraints.gridx = 1;
         constraints.gridy = 1;
-        constraints.gridwidth = 1;          // Chiếm 1 cột còn lại
-        constraints.weightx = 0.005;        // Notes chiếm phần nhỏ bên phải
+        constraints.gridwidth = 1;
+        constraints.weightx = 0.005;
         constraints.weighty = 1.0;
         JPanel notesPanel = createNotesSection(selectedDay);
         add(notesPanel, constraints);
 
-        // ========== Hàng 2: Câu nói động lực (Quote) ==========
+        // Row 2: Quote area
         constraints.gridx = 0;
         constraints.gridy = 2;
-        constraints.gridwidth = 2;          // Chiếm 2 cột
+        constraints.gridwidth = 2;
         constraints.weightx = 1.0;
-        constraints.weighty = 0.0;          // Không mở rộng chiều cao
-        constraints.insets = new Insets(10, 15, 10, 15); // Lề dưới
+        constraints.weighty = 0.0;
+        constraints.insets = new Insets(10, 15, 10, 15);
         JTextArea quoteLabel = createQuoteLabel();
+        quoteLabel.setBackground(Color.WHITE);
+        quoteLabel.setBorder(BorderFactory.createLineBorder(Color.decode("#D5DBDB")));
         add(quoteLabel, constraints);
     }
 
-    /**
-     * Tạo tiêu đề hiển thị ngày tháng với khả năng click để quay về trang Home (Form2).
-     */
     private JLabel createHeader(LocalDate selectedDay, MainForm main_form, int user_id) {
         String dateString = selectedDay.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, EEEE"));
         JLabel todayLabel = new JLabel(dateString);
         todayLabel.setFont(new Font("Helvetica", Font.BOLD, 40));
-        todayLabel.setForeground(Color.decode("#4D2508"));
+        // Dark brown for strong contrast
+        todayLabel.setForeground(Color.decode("#6E2C00"));
         todayLabel.setHorizontalAlignment(JLabel.CENTER);
         todayLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        todayLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        todayLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Xử lý sự kiện click để chuyển về trang Home
         todayLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -84,13 +82,12 @@ public class DaySchedule extends JPanel {
         return todayLabel;
     }
 
-    /**
-     * Tạo khu vực ghi chú với tính năng AutoSave.
-     */
     private JPanel createNotesSection(LocalDate selectedDay) {
         JPanel textAreaPanel = new JPanel(new BorderLayout());
-        textAreaPanel.setMinimumSize(new Dimension(150, 150));
-        textAreaPanel.setBackground(Color.LIGHT_GRAY);
+        // Light cream background for notes
+        textAreaPanel.setBackground(Color.decode("#FEF9E7"));
+        textAreaPanel.setBorder(BorderFactory.createLineBorder(Color.decode("#D5DBDB")));
+        textAreaPanel.setPreferredSize(new Dimension(200, 340));
 
         JLabel notesLabel = new JLabel("Notes:");
         notesLabel.setFont(new Font("Helvetica", Font.BOLD, 25));
@@ -99,71 +96,56 @@ public class DaySchedule extends JPanel {
 
         JTextArea textArea = new JTextArea();
         textArea.setFont(new Font("Helvetica", Font.PLAIN, 18));
-        textArea.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+        textArea.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#D1F2EB")));
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
+
         NoteService noteService = new NoteService();
         String noteContent = noteService.getNoteByDate(selectedDay).getNote();
         textArea.setText(noteContent);
+
         Timer autoSaveTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String updatedNote = textArea.getText();
                 noteService.saveOrUpdateNote(selectedDay, updatedNote);
-                System.out.println("Auto-saved note at " + selectedDay + ": " + updatedNote);
             }
         });
         autoSaveTimer.setRepeats(false);
 
         textArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            private void restartTimer() {
-                autoSaveTimer.restart();
-            }
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                restartTimer();
-            }
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                restartTimer();
-            }
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                restartTimer();
-            }
+            private void restartTimer() { autoSaveTimer.restart(); }
+            @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { restartTimer(); }
+            @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { restartTimer(); }
+            @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { restartTimer(); }
         });
 
         JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.getViewport().setBackground(Color.decode("#FEF9E7"));
         textAreaPanel.add(scrollPane, BorderLayout.CENTER);
         return textAreaPanel;
     }
 
-    /**
-     * Tạo vùng hiển thị câu nói truyền cảm hứng.
-     */
     private JTextArea createQuoteLabel() {
-        JTextArea quoteLabel = new JTextArea("");
+        JTextArea quoteLabel = new JTextArea();
         QuoteService quoteService = new QuoteService();
-        String randomQuote = quoteService.getRandomQuote();
-        quoteLabel.setText(randomQuote);
+        quoteLabel.setText(quoteService.getRandomQuote());
         quoteLabel.setEditable(false);
         quoteLabel.setWrapStyleWord(true);
         quoteLabel.setLineWrap(true);
         quoteLabel.setFont(new Font("Helvetica", Font.ITALIC, 14));
-        quoteLabel.setForeground(Color.BLUE);
+        quoteLabel.setForeground(Color.decode("#2471A3")); // navy blue quote
         quoteLabel.setPreferredSize(new Dimension(700, 50));
-        quoteLabel.setBackground(null);
         return quoteLabel;
     }
 
-    /**
-     * Hàm reset về trang Home (Form2) với ngày hiện tại.
-     * Bạn cũng nên cập nhật Form2 để nhận thêm userId nếu cần.
-     */
     private void resetCalendarSchedular(MainForm main_form, int user_id) {
-        // Giả sử Form2 đã được cập nhật để nhận userId, ví dụ:
-        // main_form.showForm(new Form2(main_form, LocalDate.now(), userId));
-        // Nếu chưa, bạn có thể giữ nguyên:
-        main_form.showForm(new Form2(main_form, LocalDate.now(), user_id));
+        Window win = SwingUtilities.getWindowAncestor(this);
+        if (win instanceof Main) {
+            Main mainFrame = (Main) win;
+            LocalDate today = LocalDate.now();
+            Form2 form2 = new Form2(main_form, today, user_id);
+            mainFrame.mainBody.displayForm(form2);
+        }
     }
 }

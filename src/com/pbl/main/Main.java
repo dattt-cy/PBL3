@@ -1,172 +1,182 @@
 package com.pbl.main;
 
-import com.pbl.component.Header;
-import com.pbl.component.Menu;
-import com.pbl.component.ThoiKhoaBieu;
-import com.pbl.event.EventMenuSelected;
-import com.pbl.event.EventShowPopupMenu;
-import com.pbl.form.ChartForm;
-import com.pbl.form.Form1;
+import com.pbl.event.EventColorChange;
 import com.pbl.form.Form2;
+import com.pbl.form.Form_1;
 import com.pbl.form.Form_Home;
+import com.pbl.form.Home_Form;
 import com.pbl.form.MainForm;
-import com.pbl.swing.MenuItem;
-import com.pbl.swing.PopupMenu;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.pbl.form.Setting_Form;
+import com.pbl.menu.EventMenu;
+import com.pbl.properties.SystemProperties;
+import com.pbl.theme.SystemTheme;
+import com.pbl.theme.ThemeColor;
+import com.pbl.theme.ThemeColorChange;
+import java.awt.Color;
 import java.time.LocalDate;
-import net.miginfocom.swing.MigLayout;
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTarget;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 public class Main extends javax.swing.JFrame {
 
-    private MigLayout layout;
-    private Menu menu;
-    private Header header;
+    private Setting_Form settingForm;
     private MainForm main;
-    private Animator animator;
     private int userID;
 
     public Main(int userID) {
-        this.userID = userID;
         initComponents();
+        setBackground(new Color(0, 0, 0, 0));
+        this.userID = userID;
         init();
-        
     }
 
     private void init() {
-        layout = new MigLayout("fill", "0[]0[100%, fill]0", "0[fill, top]0");
-        bg.setLayout(layout);
-        menu = new Menu();
-        header = new Header();
         main = new MainForm();
-        main.showForm(new Form_Home(userID));
-        System.out.println(userID);
-        menu.addEvent(new EventMenuSelected() {
+        header.initMoving(this);
+        header.initEvent(this, panelBackground1);
+        menu.addEventMenu(new EventMenu() {
             @Override
-            public void menuSelected(int menuIndex, int subMenuIndex) {
-                System.out.println("Menu Index : " + menuIndex + " SubMenu Index " + subMenuIndex);
-                if (menuIndex == 0) {
-                    if (subMenuIndex == 0) {
-                        main.showForm(new Form_Home(userID));
-                    } else if (subMenuIndex == 1) {
-                         LocalDate today = LocalDate.now();
-                         System.out.println(userID);
-                        main.showForm(new Form2(main,today, userID));
-                    } else if(subMenuIndex == 2){
-                        main.showForm(new ChartForm(userID));
-                    } else if(subMenuIndex == 3){
-                        main.showForm(new ThoiKhoaBieu());
-                    } 
-                   
-                }
-            }
-        });
-        menu.addEventShowPopup(new EventShowPopupMenu() {
-            @Override
-            public void showPopup(Component com) {
-                MenuItem item = (MenuItem) com;
-                PopupMenu popup = new PopupMenu(Main.this, item.getIndex(), item.getEventSelected(), item.getMenu().getSubMenu());
-                int x = Main.this.getX() + 52;
-                int y = Main.this.getY() + com.getY() + 86;
-                popup.setLocation(x, y);
-                popup.setVisible(true);
-            }
-        });
-        menu.initMenuItem();
-        bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
-        bg.add(header, "h 50!, wrap");
-        bg.add(main, "w 100%, h 100%");
-        TimingTarget target = new TimingTargetAdapter() {
-            @Override
-            public void timingEvent(float fraction) {
-                double width;
-                if (menu.isShowMenu()) {
-                    width = 60 + (170 * (1f - fraction));
-                } else {
-                    width = 60 + (170 * fraction);
-                }
-                layout.setComponentConstraints(menu, "w " + width + "!, spany2");
-                menu.revalidate();
-            }
+            public void selectedMenu(int index) {
+                if (index == 1) {
+                     LocalDate today = LocalDate.now();
+                        mainBody.displayForm(new Form2(main,today, userID));
 
-            @Override
-            public void end() {
-                menu.setShowMenu(!menu.isShowMenu());
-                menu.setEnableMenu(true);
-            }
-
-        };
-        animator = new Animator(500, target);
-        animator.setResolution(0);
-        animator.setDeceleration(0.5f);
-        animator.setAcceleration(0.5f);
-        header.addMenuEvent(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (!animator.isRunning()) {
-                    animator.start();
-                }
-                menu.setEnableMenu(false);
-                if (menu.isShowMenu()) {
-                    menu.hideallMenu();
+                } else if(index == 2){
+                
+                    mainBody.displayForm(new Form_1(userID));
+                } else if(index == 0){
+              
+                    mainBody.displayForm(new Form_Home(userID));
+                }else if (index == 3) {
+                    mainBody.displayForm(settingForm, "Setting");
                 }
             }
         });
-    
-        //  Start with this form
-     
+        ThemeColorChange.getInstance().addThemes(new ThemeColor(new Color(34, 34, 34), Color.WHITE) {
+            @Override
+            public void onColorChange(Color color) {
+                panelBackground1.setBackground(color);
+            }
+        });
+        ThemeColorChange.getInstance().addThemes(new ThemeColor(Color.WHITE, new Color(80, 80, 80)) {
+            @Override
+            public void onColorChange(Color color) {
+                mainBody.changeColor(color);
+            }
+        });
+        ThemeColorChange.getInstance().initBackground(panelBackground1);
+        SystemProperties pro = new SystemProperties();
+        pro.loadFromFile();
+        if (!pro.isDarkMode()) {
+            ThemeColorChange.getInstance().setMode(ThemeColorChange.Mode.LIGHT);
+            panelBackground1.setBackground(Color.WHITE);
+            mainBody.changeColor(new Color(80, 80, 80));
+        }
+        if (pro.getBackgroundImage() != null) {
+            ThemeColorChange.getInstance().changeBackgroundImage(pro.getBackgroundImage());
+        }
+        SystemTheme.mainColor = pro.getColor();
+        settingForm = new Setting_Form();
+        settingForm.setEventColorChange(new EventColorChange() {
+            @Override
+            public void colorChange(Color color) {
+                SystemTheme.mainColor = color;
+                ThemeColorChange.getInstance().ruenEventColorChange(color);
+                repaint();
+                pro.save("theme_color", color.getRGB() + "");
+            }
+        });
+        settingForm.setSelectedThemeColor(pro.getColor());
+        settingForm.setDarkMode(pro.isDarkMode());
+        settingForm.initBackgroundImage(pro.getBackgroundImage());
+        mainBody.displayForm(new Home_Form());
     }
-    public void setHeader(String username, String role, int UserID){
-        header.setlbUserName(username);
-        header.setlbRole(role);
-        this.userID = UserID;
-    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        bg = new javax.swing.JLayeredPane();
+        panelBackground1 = new com.pbl.swing.PanelBackground();
+        header = new com.pbl.component.Header();
+        menu = new com.pbl.menu.Menu();
+        mainBody = new com.pbl.component.MainBody();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        bg.setBackground(new java.awt.Color(199, 215, 251));
-        bg.setOpaque(true);
+        panelBackground1.setBackground(new java.awt.Color(34, 34, 34));
 
-        javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
-        bg.setLayout(bgLayout);
-        bgLayout.setHorizontalGroup(
-            bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1366, Short.MAX_VALUE)
+        javax.swing.GroupLayout panelBackground1Layout = new javax.swing.GroupLayout(panelBackground1);
+        panelBackground1.setLayout(panelBackground1Layout);
+        panelBackground1Layout.setHorizontalGroup(
+            panelBackground1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(header, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panelBackground1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainBody, javax.swing.GroupLayout.DEFAULT_SIZE, 1108, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        bgLayout.setVerticalGroup(
-            bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 783, Short.MAX_VALUE)
+        panelBackground1Layout.setVerticalGroup(
+            panelBackground1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBackground1Layout.createSequentialGroup()
+                .addComponent(header, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelBackground1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(menu, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                    .addComponent(mainBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg)
+            .addComponent(panelBackground1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg)
+            .addComponent(panelBackground1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-   
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+       
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLayeredPane bg;
+    private com.pbl.component.Header header;
+    public com.pbl.component.MainBody mainBody;
+    private com.pbl.menu.Menu menu;
+    private com.pbl.swing.PanelBackground panelBackground1;
     // End of variables declaration//GEN-END:variables
 }

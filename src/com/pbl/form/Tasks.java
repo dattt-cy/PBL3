@@ -11,128 +11,123 @@ import java.util.List;
 
 public class Tasks extends JPanel {
 
-    private TaskService taskService; // Sử dụng lớp nghiệp vụ TaskService
-    private int userId;              // ID của người dùng hiện hành
+    private final TaskService taskService;
+    private final int userId;
+    private final LocalDate date;
+    private final MainForm mainForm;
+    private final JPanel parentPanel;
+    private JPanel listPanel;
 
-    /**
-     * Class constructor.
-     *
-     * @param date      The date of the tasks.
-     * @param mainForm  The main form object.
-     * @param mainPanel The parent panel object.
-     * @param userId    ID của người dùng đang đăng nhập
-     */
-    public Tasks(LocalDate date, MainForm mainForm, JPanel mainPanel, int userId) {
-        // Lưu userId
+    public Tasks(LocalDate date, MainForm mainForm, JPanel parentPanel, int userId) {
+        this.date = date;
+        this.mainForm = mainForm;
+        this.parentPanel = parentPanel;
         this.userId = userId;
-        
-        // Set up tasks panel
+        this.taskService = new TaskService();
+
         setPreferredSize(new Dimension(400, 400));
         setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(199, 215, 251));
+        // Match calendar neutral background
+        setBackground(Color.decode("#E5E7E9"));
         setBorder(BorderFactory.createEmptyBorder(20, 10, 15, 10));
 
-        // Khởi tạo TaskService để gọi các phương thức nghiệp vụ
-        taskService = new TaskService();
+        // Panel danh sách tasks
+        listPanel = new JPanel(new BorderLayout());
+        listPanel.setBackground(Color.decode("#E5E7E9"));
+        add(listPanel, BorderLayout.CENTER);
 
-        // Thêm tasks vào panel
-        createTasksSection(date, mainForm, mainPanel);
+        // Nút New task
+        JButton newTaskButton = new JButton("New");
+        newTaskButton.setFont(new Font("Helvetica", Font.PLAIN, 15));
+        newTaskButton.setBackground(Color.decode("#3498DB"));  
+        newTaskButton.setForeground(Color.WHITE);
+        newTaskButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        newTaskButton.addActionListener(e -> openEditor(new Task(userId, date)));
+        add(newTaskButton, BorderLayout.SOUTH);
+
+        // Build lần đầu
+        refreshTasks();
     }
 
-    private void createTasksSection(LocalDate date, MainForm mainForm, JPanel mainPanel) {
-        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    private void refreshTasks() {
+        listPanel.removeAll();
 
-        // Lấy danh sách task theo ngày và userId
-        List<Task> tasks = taskService.getTasksByDate(formattedDate, userId);
-
+        List<Task> tasks = taskService.getTasksByDate(
+                date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), userId);
         int rows = Math.max(4, tasks.size() + 1);
-        JPanel list = new JPanel(new GridLayout(rows, 1, 10, 5));
-        list.setBackground(new Color(199, 215, 251));
-        JScrollPane scrollPane = new JScrollPane(list);
+        JPanel grid = new JPanel(new GridLayout(rows, 1, 10, 5));
+        grid.setBackground(Color.decode("#D1F2EB"));
 
         for (int i = 0; i < tasks.size(); i++) {
-            final int j = i;
+            final int idx = i;
+            Task t = tasks.get(i);
             JPanel taskPanel = new JPanel(new GridLayout(2, 2));
             taskPanel.setPreferredSize(new Dimension(400, 80));
             taskPanel.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEmptyBorder(20, 20, 20, 20),
-                    BorderFactory.createMatteBorder(0, 10, 0, 0, Color.decode(getTaskColor(tasks.get(i).getCategory())))
+                    BorderFactory.createMatteBorder(
+                            0, 10, 0, 0,
+                            // decode hex color for category stripe
+                            Color.decode(getTaskColor(t.getCategory()))
+                    )
             ));
-            taskPanel.setBackground(Color.decode("#F1B0DA"));
+            // Light cell fill to match calendar
+            taskPanel.setBackground(Color.decode("#FDEBD0"));
             taskPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             taskPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // Mở TaskEditor để chỉnh sửa task đã chọn
-                    new TaskEditor(tasks.get(j), mainForm, mainPanel);
+                    openEditor(t);
                 }
             });
 
             JPanel taskTop = new JPanel(new BorderLayout());
-            taskTop.setBackground(null);
-            JLabel titleLabel = new JLabel(tasks.get(i).getTitle());
+            taskTop.setOpaque(false);
+            JLabel titleLabel = new JLabel(t.getTitle());
             titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
             titleLabel.setFont(new Font("Helvetica", Font.PLAIN, 20));
-            titleLabel.setForeground(Color.decode("#5c2c0c"));
+            titleLabel.setForeground(Color.decode("#2C3E50"));
             taskTop.add(titleLabel, BorderLayout.WEST);
 
             JCheckBox checkBox = new JCheckBox();
-            checkBox.setBackground(null);
-            checkBox.setSelected(tasks.get(i).isDone());
-            checkBox.addItemListener(e -> {
-                Task t = tasks.get(j);
-                boolean isSelected = checkBox.isSelected();
-                t.setDone(isSelected);
-                // Cập nhật task qua TaskService
+            checkBox.setOpaque(false);
+            checkBox.setSelected(t.isDone());
+            checkBox.addItemListener(evt -> {
+                t.setDone(checkBox.isSelected());
                 taskService.updateTask(t);
             });
             taskTop.add(checkBox, BorderLayout.EAST);
 
-            JLabel timeLabel = new JLabel(tasks.get(i).getDateTimeToString());
+            JLabel timeLabel = new JLabel(t.getDateTimeToString());
             timeLabel.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
             timeLabel.setFont(new Font("Helvetica", Font.PLAIN, 15));
-            timeLabel.setForeground(Color.DARK_GRAY);
+            timeLabel.setForeground(Color.decode("#2C3E50"));
 
             taskPanel.add(taskTop);
             taskPanel.add(timeLabel);
-            list.add(taskPanel);
+            grid.add(taskPanel);
         }
-        add(scrollPane, BorderLayout.CENTER);
 
-        JButton newTaskButton = new JButton("New");
-        newTaskButton.setFont(new Font("Helvetica", Font.PLAIN, 15));
-        newTaskButton.setBackground(Color.decode("#dda35d"));
-        newTaskButton.setForeground(Color.WHITE);
-        newTaskButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        newTaskButton.addActionListener(e -> {
-          
-            new TaskEditor(new Task(userId, date), mainForm, mainPanel);
-            Form2.getInstance().updateTasks(date);
-        });
-        add(newTaskButton, BorderLayout.SOUTH);
-        
+        JScrollPane scrollPane = new JScrollPane(grid);
+        scrollPane.getViewport().setBackground(Color.decode("#E5E7E9"));
+        listPanel.add(scrollPane, BorderLayout.CENTER);
+        listPanel.revalidate();
+        listPanel.repaint();
     }
 
-    /**
-     * getTaskColor - Lấy màu tương ứng dựa trên category của task.
-     *
-     * @param category The task category.
-     * @return A string representing the hex color.
-     */
+    private void openEditor(Task task) {
+        new TaskEditor(task, mainForm, parentPanel, this::refreshTasks);
+    }
+
     private String getTaskColor(String category) {
+        if (category == null) return "#666822";
         switch (category) {
-            case "General":
-                return "#666822";
-            case "Holiday":
-                return "#c67713";
-            case "Personal":
-                return "#c1380a";
-            case "Meeting":
-                return "#742505";
-            case "Social":
-                return "#4d2508";
-            default:
-                return "#666822";
+            case "General":  return "#666822";
+            case "Holiday":  return "#c67713";
+            case "Personal": return "#c1380a";
+            case "Meeting":  return "#742505";
+            case "Social":   return "#4d2508";
+            default:          return "#666822";
         }
     }
 }

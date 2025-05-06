@@ -20,6 +20,9 @@ public interface TasksDAO {
     void deleteTask(int taskId);
     void updateTask(Task t);
     int countTasksByMonthAndStatus(int userId, int month, boolean status); 
-    
+    int countByCategoryAndMonth(int userId, String category, int month, int year);
     int countOverdueTasks(int userId, int month);
+   
+
+    
 }

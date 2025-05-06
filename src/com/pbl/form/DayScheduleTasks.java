@@ -2,6 +2,7 @@ package com.pbl.form;
 
 import com.pbl.model.Task;
 import com.pbl.service.TaskService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,25 +11,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DayScheduleTasks extends JPanel {
+    private final TaskService taskService;
+    private final LocalDate date;
+    private final MainForm frame;
+    private final JPanel parentPanel;
+    private final int userId;
+    private final JPanel listContainer;
 
-    private TaskService taskService;
-
-    // Thêm tham số userId để xác định các task của user hiện hành
     public DayScheduleTasks(LocalDate date, MainForm frame, JPanel parentPanel, int userId) {
-        // Khởi tạo service
-        taskService = new TaskService();
+        this.date = date;
+        this.frame = frame;
+        this.parentPanel = parentPanel;
+        this.userId = userId;
+        this.taskService = new TaskService();
 
-        // Set up tasks panel (có thể điều chỉnh kích thước theo ý bạn)
-        setPreferredSize(new Dimension(2000, 1600));
+        setPreferredSize(new Dimension(350, 350));
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(Color.decode("#FFF8E1"));  // Window nền chính (vibrant)
 
-        // Lấy dữ liệu task từ DB thông qua TaskService, truyền thêm userId
-        DateTimeFormatter dbDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = date.format(dbDateFormatter);
-        List<Task> tasks = taskService.getTasksByDate(formattedDate, userId);
-
-        // ================= Header Panel =================
+        // Header Panel
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         topPanel.setBackground(null);
@@ -37,32 +38,45 @@ public class DayScheduleTasks extends JPanel {
         tasksLabel.setFont(new Font("Helvetica", Font.BOLD, 25));
         topPanel.add(tasksLabel, BorderLayout.WEST);
 
-        // Nút Add để mở TaskEditor để thêm task mới
         JLabel addButton = new JLabel(new ImageIcon(getClass().getResource("/com/pbl/icon/add.png")));
-        addButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Khi tạo task mới, khởi tạo Task với userId và ngày hiện hành
-                new TaskEditor(new Task(userId, date), frame, parentPanel);
-               
+                new TaskEditor(new Task(userId, date), frame, parentPanel, DayScheduleTasks.this::refresh);
             }
         });
         topPanel.add(addButton, BorderLayout.EAST);
+
         add(topPanel, BorderLayout.NORTH);
 
-        // ================= Bảng hiển thị tasks =================
-        // Số hàng: 1 header + số dòng task (ít nhất 6 dòng)
+        // Container cho phần danh sách tasks
+        listContainer = new JPanel(new BorderLayout());
+        add(listContainer, BorderLayout.CENTER);
+
+        // Build lần đầu
+        refresh();
+    }
+
+    /**
+     * Tải lại danh sách tasks và cập nhật giao diện
+     */
+    private void refresh() {
+        listContainer.removeAll();
+
+        List<Task> tasks = taskService.getTasksByDate(
+            date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), userId
+        );
         int rows = Math.max(6, tasks.size() + 1);
 
-        // Panel chứa danh sách task với lưới 5 cột
+        // Panel chứa toàn bộ bảng
         JPanel list = new JPanel(new GridLayout(rows, 5, 2, 2));
-        list.setBackground(Color.WHITE);
+        list.setBackground(Color.decode("#D1F2EB"));
 
-        // Tạo header row
+        // Header row
         JPanel header = new JPanel(new GridLayout(1, 5));
         header.setPreferredSize(new Dimension(350, 40));
-        header.setBackground(Color.decode("#aa6231"));
+        header.setBackground(Color.decode("#FF8A65"));      // cam-hồng sáng
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         header.add(createHeaderLabel("No."));
         header.add(createHeaderLabel("Time"));
@@ -71,38 +85,40 @@ public class DayScheduleTasks extends JPanel {
         header.add(createHeaderLabel("Done"));
         list.add(header);
 
+        // Dữ liệu tasks
         for (int i = 0; i < tasks.size(); i++) {
-            final int j = i;
+            final int idx = i;
+            Task t = tasks.get(i);
+
+            // xen kẽ trắng & cam nhạt
+            Color rowBg = (i % 2 == 0)
+                ? Color.WHITE
+                : Color.decode("#FFF3E0");
             JPanel taskPanel = new JPanel(new GridLayout(1, 5));
             taskPanel.setPreferredSize(new Dimension(350, 30));
-            taskPanel.setBackground(Color.decode("#f0f0f0"));
-            taskPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            taskPanel.setBackground(rowBg);
+            taskPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             taskPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    new TaskEditor(tasks.get(j), frame, parentPanel);
+                    new TaskEditor(tasks.get(idx), frame, parentPanel, DayScheduleTasks.this::refresh);
                 }
             });
-           
 
-            taskPanel.add(createBodyLabel(Integer.toString(i + 1), "#000000"));
-            taskPanel.add(createBodyLabel(tasks.get(i).getTimeToString(), "#000000"));
-            // Cột thứ 3: Task title
-            taskPanel.add(createBodyLabel(tasks.get(i).getTitle(), "#000000"));
-            // Cột thứ 4: Category
-            taskPanel.add(createBodyLabel(tasks.get(i).getCategory(), getTaskColor(tasks.get(i).getCategory())));
-            // Cột thứ 5: Checkbox Done
+            taskPanel.add(createBodyLabel(String.valueOf(idx + 1), "#212121"));
+            taskPanel.add(createBodyLabel(t.getTimeToString(), "#212121"));
+            taskPanel.add(createBodyLabel(t.getTitle(), "#212121"));
+            taskPanel.add(createBodyLabel(t.getCategory(), getTaskColor(t.getCategory())));
+
             JCheckBox doneCheck = new JCheckBox();
-            Icon notSelected = new ImageIcon(getClass().getResource("/com/pbl/icon/check-box-not-selected.png"));
-            Icon selected = new ImageIcon(getClass().getResource("/com/pbl/icon/check-box-selected.png"));
             doneCheck.setBorder(BorderFactory.createEmptyBorder(0, 66, 0, 0));
-            doneCheck.setIcon(notSelected);
-            doneCheck.setSelectedIcon(selected);
-            doneCheck.setSelected(tasks.get(i).isDone());
-            doneCheck.addItemListener(e -> {
-                Task t = tasks.get(j);
+            doneCheck.setIcon(new ImageIcon(getClass().getResource("/com/pbl/icon/check-box-not-selected.png")));
+            doneCheck.setSelectedIcon(new ImageIcon(getClass().getResource("/com/pbl/icon/check-box-selected.png")));
+            doneCheck.setSelected(t.isDone());
+            doneCheck.addItemListener(evt -> {
                 t.setDone(doneCheck.isSelected());
-                taskService.updateTask(t); // Cập nhật trạng thái trong DB
+                taskService.updateTask(t);
+                refresh();
             });
             taskPanel.add(doneCheck);
 
@@ -110,12 +126,11 @@ public class DayScheduleTasks extends JPanel {
         }
 
         JScrollPane scrollPane = new JScrollPane(list);
-        add(scrollPane, BorderLayout.CENTER);
+        listContainer.add(scrollPane, BorderLayout.CENTER);
+        listContainer.revalidate();
+        listContainer.repaint();
     }
 
-    /**
-     * Tạo nhãn header cho bảng.
-     */
     private JLabel createHeaderLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(new Font("Helvetica", Font.BOLD, 15));
@@ -124,9 +139,6 @@ public class DayScheduleTasks extends JPanel {
         return label;
     }
 
-    /**
-     * Tạo nhãn cho nội dung bảng.
-     */
     private JLabel createBodyLabel(String text, String fontColor) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(new Font("Helvetica", Font.PLAIN, 15));
@@ -135,20 +147,19 @@ public class DayScheduleTasks extends JPanel {
         return label;
     }
 
+    /**
+     * Trả về mã màu cho từng category (vibrant palette)
+     */
     private String getTaskColor(String category) {
+        if (category == null || category.isEmpty()) return "#1E88E5"; // General mặc định
         switch (category) {
-            case "General":
-                return "#666822";
-            case "Holiday":
-                return "#c67713";
-            case "Personal":
-                return "#c1380a";
-            case "Meeting":
-                return "#742505";
-            case "Social":
-                return "#4d2508";
-            default:
-                return "#666822";
+            case "General":  return "#1E88E5"; // xanh dương
+            case "Holiday":  return "#D81B60"; // hồng đậm
+            case "Personal": return "#8E24AA"; // tím tươi
+            case "Meeting":  return "#5E35B1"; // tím đậm
+            case "Social":   return "#3949AB"; // xanh chàm
+            case "Study":    return "#43A047"; // xanh lá tươi
+            default:          return "#1E88E5";
         }
     }
 }
