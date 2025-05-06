@@ -21,5 +21,5 @@ public interface TasksDAO {
     void updateTask(Task t);
     int countTasksByMonthAndStatus(int userId, int month, boolean status); 
     
-    
+    int countOverdueTasks(int userId, int month);
 }
