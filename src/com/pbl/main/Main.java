@@ -1,6 +1,7 @@
 package com.pbl.main;
 
 import com.pbl.event.EventColorChange;
+import com.pbl.form.Clockk;
 import com.pbl.form.Form2;
 import com.pbl.form.Form_1;
 import com.pbl.form.Form_Home;
@@ -47,6 +48,9 @@ public class Main extends javax.swing.JFrame {
                     mainBody.displayForm(new Form_Home(userID));
                 }else if (index == 3) {
                     mainBody.displayForm(settingForm, "Setting");
+                }
+                else if(index == 4){
+                    mainBody.displayForm(new Clockk(userID));
                 }
             }
         });

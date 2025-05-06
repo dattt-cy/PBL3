@@ -58,6 +58,7 @@ public class Menu extends javax.swing.JPanel {
         addMenu("Schedule", "2", 1);
         addMenu("Task Statistics", "3", 2);
         addMenu("Setting", "7", 3);
+        addMenu("Clock", "4", 4);
         //  add more menu here
         menu.repaint();
         menu.revalidate();
