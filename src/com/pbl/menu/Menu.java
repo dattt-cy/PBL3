@@ -1,5 +1,7 @@
 package com.pbl.menu;
 
+import com.pbl.component.MainBody;
+import com.pbl.form.TakeNote;
 import com.pbl.swing.MenuButton;
 import com.pbl.theme.SystemTheme;
 import java.awt.Color;
@@ -59,6 +61,7 @@ public class Menu extends javax.swing.JPanel {
         addMenu("Task Statistics", "3", 2);
         addMenu("Setting", "7", 3);
         addMenu("Clock", "4", 4);
+        addMenu("Take note", "5",5);
         //  add more menu here
         menu.repaint();
         menu.revalidate();
@@ -91,7 +94,14 @@ public class Menu extends javax.swing.JPanel {
         m.setText("  " + menuName);
         m.addActionListener(new ActionListener() {
             @Override
+            
             public void actionPerformed(ActionEvent ae) {
+                if (index == 5) {  // với menu “Take note” (ở vị trí 5)
+                    clearSelected();
+                    selectedIndex = index;
+                    setSelectedMenu(index);  // cập nhật ngay, không animate
+                    runEvent();              // load form TakeNote
+                  } else {
                 if (index != selectedIndex) {
                     if (animator.isRunning()) {
                         animator.stop();
@@ -103,6 +113,7 @@ public class Menu extends javax.swing.JPanel {
                     target = new PropertySetter(Menu.this, "selectedLocation", selectedLocation, targetLocation);
                     animator.addTarget(target);
                     animator.start();
+                }
                 }
             }
         });
@@ -150,7 +161,7 @@ public class Menu extends javax.swing.JPanel {
     }
 
     private void runEvent() {
-        for (EventMenu event : events) {
+     for (EventMenu event : events) {
             event.selectedMenu(selectedIndex);
         }
     }

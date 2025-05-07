@@ -176,6 +176,7 @@ public class BlankPlotChart extends JComponent {
             for (int i = 0; i < labelCount; i++) {
                 blankPlotChatRender.renderSeries(this, g2, getRectangle(i, height, space, locationX, insets.top), i);
             }
+            @SuppressWarnings("unchecked")
             List<Path2D.Double> gra = initGra(blankPlotChatRender.getMaxLegend());
             for (int i = 0; i < labelCount; i++) {
                 blankPlotChatRender.renderSeries(this, g2, getRectangle(i, height, space, locationX, insets.top), i, gra);

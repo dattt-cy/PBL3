@@ -8,6 +8,7 @@ import com.pbl.form.Form_Home;
 import com.pbl.form.Home_Form;
 import com.pbl.form.MainForm;
 import com.pbl.form.Setting_Form;
+import com.pbl.form.TakeNote;
 import com.pbl.menu.EventMenu;
 import com.pbl.properties.SystemProperties;
 import com.pbl.theme.SystemTheme;
@@ -51,6 +52,9 @@ public class Main extends javax.swing.JFrame {
                 }
                 else if(index == 4){
                     mainBody.displayForm(new Clockk(userID));
+                }
+                else if(index == 5){
+                    mainBody.displayForm(new TakeNote(userID));
                 }
             }
         });
