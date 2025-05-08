@@ -8,6 +8,8 @@ import static com.pbl.model.Song.DEFAULT_SONG_TITLES;
 import com.pbl.model.Track;
 import static com.pbl.model.Track.DEFAULT_TONE_PATHS;
 import static com.pbl.model.Track.DEFAULT_TONE_TITLES;
+import com.pbl.service.SongService;
+import com.pbl.service.TrackService;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -25,6 +27,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class Clockk extends javax.swing.JPanel implements Runnable{
+    private final TrackService trackService = new TrackService();
+    private final SongService songService   = new SongService();
+    
     String sound, title;
     private FileInputStream alarmInputStream;
     private BufferedInputStream alarmBufferedInputStream;
@@ -57,22 +62,20 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
     private JLabel jLabelHour;
     private JLabel jLabelMinute;
     private JLabel jLabelToneIcon;
-    private JLabel jLabelToneName;
     private JLabel jLabelStatus;
     private JLabel jLabelMusicIcon;
     private JLabel jLabelSongName;
-    private JLayeredPane jPlayered;
     private JComboBox<Track> cboTone;
     private JComboBox<Song>  cboSong;
     private JButton jBAddSong;
     private JButton jBAddTone;
-    private byte[] currentToneBytes;    
-    private byte[] currentSongBytes;
-    private Player tonePlayer;
     private int currentUserId;
     private final ImageIcon checkMarkIcon;
     private final ImageIcon checkedIcon;
-   
+    private JButton butXoaTone;
+    private JButton butXoaSong;
+    
+    
     public Clockk(int userID) {
         checkMarkIcon = new ImageIcon(getClass().getResource("/com/pbl/icon/check-mark.png"));
         checkedIcon = new ImageIcon(getClass().getResource("/com/pbl/icon/checked.png"));
@@ -173,20 +176,26 @@ if (url == null) {
         jBAddTone = new JButton("Add Tone");
         jBAddTone.setMargin(new Insets(2, 10, 2, 10));
         jBAddTone.setPreferredSize(new Dimension(100, 35));
-
+        
+        butXoaTone = new JButton("Delete");
+        butXoaTone.setMargin(new Insets(2, 10, 2, 10));
+        butXoaTone.setPreferredSize(new Dimension(100, 35));
         jLabelToneIcon = new JLabel();
 
         cboTone = new JComboBox<>();
         cboTone.setPreferredSize(new Dimension(250, 40));
+        
         loadCombo(cboTone);
 
         tone.add(jLabelToneIcon);
         tone.add(cboTone);
         tone.add(jBAddTone);
+        tone.add(butXoaTone);
+        
         alarmPanel.add(tone);
 
         // Buttons row 1: Set Ring và Listen
-        JPanel ringPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 10));
+        JPanel ringPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 60, 10));
         ringPanel.setOpaque(true);
         ringPanel.setBackground(ivory);
         jBRingtone = new JButton("Set Ring");
@@ -228,7 +237,9 @@ if (url == null) {
             new Font("Segoe UI", Font.BOLD, 36), new Color(0, 100, 0)
         );
         musicPanel.setBorder(musicBorder);
-
+        
+        JPanel toppMusic = new JPanel(new GridLayout(2,1,10, 10));
+        toppMusic.setBackground(ivory);
         JPanel topMusic = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         topMusic.setOpaque(true);
         topMusic.setBackground(ivory);
@@ -236,18 +247,27 @@ if (url == null) {
         cboSong = new JComboBox<>();
         cboSong.setPreferredSize(new Dimension(300,37));
         loadSongCombo(cboSong);
-        jBAddSong = new JButton("Add Song");
+        
+        jLabelMusicIcon = new JLabel();
+        jLabelSongName = new JLabel();
+        topMusic.add(jLabelMusicIcon); topMusic.add(cboSong); 
+        toppMusic.add(topMusic);
+        musicPanel.add(toppMusic);
+
+       JPanel button = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+       button.setBackground(ivory);
+       jBAddSong = new JButton("Add Song");
         jBAddSong.setMargin(new Insets(2, 10, 2, 10));
         jBAddSong.setPreferredSize(new Dimension(100, 35));
         jBAddSong.addActionListener(e -> onAddSong());
-
-        jLabelMusicIcon = new JLabel();
-        jLabelSongName = new JLabel();
-        topMusic.add(jLabelMusicIcon); topMusic.add(cboSong); topMusic.add(jBAddSong);
-
-         JPanel top = new JPanel(new BorderLayout());
-        top.add(topMusic, BorderLayout.SOUTH);
-        musicPanel.add(topMusic);
+        
+        butXoaSong = new JButton("Delete");
+        butXoaSong.setMargin(new Insets(2, 10, 2, 10));
+        butXoaSong.setPreferredSize(new Dimension(100, 35));
+        button.add(jBAddSong);
+        button.add(butXoaSong);
+        
+        toppMusic.add(button);
 
         JPanel set2 = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
         JLabel musicon = new JLabel();
@@ -309,40 +329,71 @@ if (url == null) {
     });
         jBRingtone.addActionListener(e -> chooseToneFromCombo());
         jButtonSetSong.addActionListener(e -> chooseSongFromCombo());
+        
+        cboTone.addActionListener(e -> updateDeleteToneButtonState());
+        butXoaTone.addActionListener(e -> deleteTone());
+        cboSong.addActionListener(e -> updateDeleteSongButtonState());
+        butXoaSong.addActionListener(e -> deleteSong());
+        
           }
-        private void loadCombo(JComboBox<Track> cb) {
-        DefaultComboBoxModel<Track> m = new DefaultComboBoxModel<>();
+    
+ 
+    private void loadCombo(JComboBox<Track> cb) {
+        DefaultComboBoxModel<Track> model = new DefaultComboBoxModel<>();
 
         for (int i = 0; i < DEFAULT_TONE_PATHS.length; i++) {
-            m.addElement(new Track(
+            model.addElement(new Track(
                 -1,
                 DEFAULT_TONE_TITLES[i],
                 "RES:" + DEFAULT_TONE_PATHS[i]
             ));
         }
-
-        List<Track> userList = TrackDAO.loadTracks();       
-        userList.forEach(m::addElement);
-
-        cb.setModel(m);
-        if (m.getSize() > 0) cb.setSelectedIndex(0);
+        try {
+            List<Track> userList = trackService.getAllTracks();
+            userList.forEach(model::addElement);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Lỗi khi load Tones:\n" + ex.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+        cb.setModel(model);
+        if (model.getSize() > 0) {
+            cb.setSelectedIndex(0);
+        }
     }
-          private void loadSongCombo(JComboBox<Song> cb) {
-        DefaultComboBoxModel<Song> m = new DefaultComboBoxModel<>();
+
+    private void loadSongCombo(JComboBox<Song> cb) {
+        DefaultComboBoxModel<Song> model = new DefaultComboBoxModel<>();
 
         for (int i = 0; i < DEFAULT_SONG_PATHS.length; i++) {
-            m.addElement(new Song(
+            model.addElement(new Song(
                 -1,
                 DEFAULT_SONG_TITLES[i],
                 "RES:" + DEFAULT_SONG_PATHS[i]
             ));
         }
-        List<Song> userList = songDAO.loadSongs();           
-        userList.forEach(m::addElement);
 
-        cb.setModel(m);
-        if (m.getSize() > 0) cb.setSelectedIndex(0);
-}
+        try {
+            List<Song> userList = songService.getAllSongs();
+            userList.forEach(model::addElement);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Lỗi khi load Songs:\n" + ex.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        cb.setModel(model);
+        if (model.getSize() > 0) {
+            cb.setSelectedIndex(0);
+        }
+    }
+
  
     private void chooseToneFromCombo(){
          Track t = (Track)cboTone.getSelectedItem();
@@ -361,7 +412,6 @@ if (url == null) {
         playSong(customSoundPath);
 }
 
-  
     
     private String[] generateArray(int n) {
         String[] arr = new String[n];
@@ -584,27 +634,40 @@ if (url == null) {
     
     
 
-    private void onAddTone() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setFileFilter(new FileNameExtensionFilter("MP3 Files", "mp3"));
-        chooser.setDialogTitle("Chọn file MP3");
+// Thêm Tone (nhạc nền)
+private void onAddTone() {
+    JFileChooser chooser = new JFileChooser();
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setFileFilter(new FileNameExtensionFilter("WAV/MP3 Files", "wav", "mp3"));
+    chooser.setDialogTitle("Chọn file âm thanh để thêm vào Tones");
 
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
-            String title = f.getName();                    // "alarm.mp3"
-            String path  = f.getAbsolutePath();            // "C:\Users\DELL\Music\alarm.mp3"
-
-            // **KHÔNG** làm thêm: + ".mp3"
-            TrackDAO.insertTrack(currentUserId, title, path);
-
+    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File f = chooser.getSelectedFile();
+        String title = f.getName();
+        String path  = f.getAbsolutePath();
+        try {
+            trackService.addTrack(currentUserId, title, path);
             loadCombo(cboTone);
             cboTone.setSelectedIndex(cboTone.getItemCount() - 1);
-            JOptionPane.showMessageDialog(this, "Đã thêm file: " + title);
+            JOptionPane.showMessageDialog(
+                this,
+                "Đã thêm tone: " + title,
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Lỗi khi thêm tone:\n" + ex.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
         }
     }
+}
 
-    private void onAddSong() {
+// Thêm Song (bài hát)
+private void onAddSong() {
     JFileChooser chooser = new JFileChooser();
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     chooser.setFileFilter(new FileNameExtensionFilter("MP3 Files", "mp3"));
@@ -614,18 +677,77 @@ if (url == null) {
         File f = chooser.getSelectedFile();
         String title = f.getName();
         String path  = f.getAbsolutePath();
-
-        songDAO.insertSong(currentUserId, title, path);
-        loadSongCombo(cboSong);
-        cboSong.setSelectedIndex(cboSong.getItemCount() - 1);
-        JOptionPane.showMessageDialog(
-            this,
-            "Đã thêm bài: " + title,
-            "Thông báo",
-            JOptionPane.INFORMATION_MESSAGE
-        );
+        try {
+            songService.addSong(currentUserId, title, path);
+            loadSongCombo(cboSong);
+            cboSong.setSelectedIndex(cboSong.getItemCount() - 1);
+            JOptionPane.showMessageDialog(
+                this,
+                "Đã thêm bài: " + title,
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Lỗi khi thêm bài hát:\n" + ex.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }
+
+    private void deleteTone(){
+        Track t = (Track) cboTone.getSelectedItem();
+        if (t != null && t.getId() != -1
+            && JOptionPane.showConfirmDialog(this,
+                 "Xác nhận xóa chuông \"" + t.getTitle() + "\"?",
+                 "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            try {
+                if (trackService.deleteTrack(t.getId())) {
+                    loadCombo(cboTone);        
+                    updateDeleteToneButtonState(); 
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa không thành công.");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+            }
+        }
+    }
+    
+    public void deleteSong(){
+        Song s = (Song) cboSong.getSelectedItem();
+        if (s != null && s.getId() != -1
+            && JOptionPane.showConfirmDialog(this,
+                 "Xác nhận xóa bài \"" + s.getTitle() + "\"?",
+                 "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            try {
+                if (songService.deleteSong(s.getId())) {
+                    loadSongCombo(cboSong);
+                    updateDeleteSongButtonState();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa không thành công.");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+            }
+        }
+    }
+    
+    private void updateDeleteToneButtonState() {
+    Track t = (Track) cboTone.getSelectedItem();
+    butXoaTone.setEnabled(t != null && t.getId() != -1);
+}
+
+    private void updateDeleteSongButtonState() {
+        Song s = (Song) cboSong.getSelectedItem();
+        butXoaSong.setEnabled(s != null && s.getId() != -1);
+    }
+    
     public void run() {
         while (true) {
             String t = new SimpleDateFormat("HH:mm:ss").format(new Date());

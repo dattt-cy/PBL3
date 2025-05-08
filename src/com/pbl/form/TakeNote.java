@@ -80,8 +80,8 @@ public class TakeNote extends JPanel {
 
         // Header "Notes"
         JLabel lblHeader = new JLabel("Notes");
-//       lblHeader.setForeground(Color.GREEN);
-        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        lblHeader.setForeground(Color.GREEN);
+        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 45));
         lblHeader.setBorder(BorderFactory.createEmptyBorder(5, 20, 10, 0));
         leftPanel.add(lblHeader, BorderLayout.NORTH);
 
@@ -92,10 +92,9 @@ public class TakeNote extends JPanel {
         listNotes.setFixedCellWidth(leftWidth - 30);
         JScrollPane scrollList = new JScrollPane(listNotes);
         scrollList.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-//        scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-          scrollList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-          scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollList.setBackground(new Color(255, 240, 245));
         leftPanel.add(scrollList, BorderLayout.CENTER);
 
         splitPane.setLeftComponent(leftPanel);
@@ -158,16 +157,19 @@ public class TakeNote extends JPanel {
 
     private void initEvents() {
         listNotes.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                currentNote = listNotes.getSelectedValue();
-                if (currentNote != null) {
-                    txtTitle.setText(currentNote.getTitle());
-                    txtContent.setText(currentNote.getContent());
-                    lblDate.setText(currentNote.getCreatedAt()
-                        .format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
-                }
-            }
-        });
+    if (!e.getValueIsAdjusting()) {
+        currentNote = listNotes.getSelectedValue();
+        if (currentNote != null) {
+            txtTitle.setText(currentNote.getTitle());
+            txtContent.setText(currentNote.getContent());
+            lblDate.setText(currentNote.getCreatedAt()
+                .format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
+            btnAdd.setEnabled(false); // vô hiệu hóa nút Add khi chọn note có sẵn
+        } else {
+            btnAdd.setEnabled(true);
+        }
+    }
+});
 
         btnAdd.addActionListener(e -> {
             String title   = txtTitle.getText().trim();
