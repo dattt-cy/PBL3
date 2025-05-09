@@ -11,6 +11,8 @@ import com.pbl.swing.ScrollBar;
 import com.pbl.swing.noticeboard.ModelNoticeBoard;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -24,8 +26,12 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 public class Form_Home extends javax.swing.JPanel {
 
@@ -34,25 +40,77 @@ public class Form_Home extends javax.swing.JPanel {
         setOpaque(false);
         initData(user_id);
         spTable.setVerticalScrollBar(new ScrollBar());
-        spTable.getVerticalScrollBar().setBackground(Color.WHITE);
-        spTable.getViewport().setBackground(Color.WHITE);
+        spTable.getVerticalScrollBar().setBackground(Color.DARK_GRAY);
+        spTable.getViewport().setBackground(Color.BLACK);
         JPanel p = new JPanel();
-        p.setBackground(Color.WHITE);
-  
-          spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
-          initTaskTable(user_id);
+        p.setBackground(Color.BLUE);
+        Color BG_PANEL = new Color(0xF3F4F6);
+        Color BG_HEADER = new Color(0xE2E8F0);
+        Color BG_ROW_ALT = new Color(0xEDF2F7);
+        Color BORDER = new Color(0xCBD5E1);
+        Color TEXT = new Color(0x334155);
+        Color ACCENT = new Color(0x14B8A6);
+        table.setBackground(BG_PANEL);
+        table.setGridColor(BORDER);
+        table.setShowGrid(true);
+        table.setRowHeight(28);
+        table.setSelectionBackground(ACCENT);
+        table.setSelectionForeground(Color.WHITE);
+        spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        table.getTableHeader().setBackground(new Color(0x3498DB));
+        table.getTableHeader().setForeground(TEXT);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable tbl, Object val,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, isSelected, hasFocus, row, col);
+                if (isSelected) {
+                    c.setBackground(ACCENT);
+                    c.setForeground(Color.WHITE);
+                } else {
+                    Color evenRow = new Color(0xD1F2EB);
+                    Color oddRow = new Color(0xF9FAFB);
+                    c.setBackground(row % 2 == 0 ? evenRow : evenRow);
+                    c.setForeground(TEXT);
+                }
+                return c;
+            }
+        };
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel()
+                    .getColumn(i)
+                    .setCellRenderer(renderer);
+        }
+        JTableHeader header = table.getTableHeader();
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable tbl, Object value,
+                    boolean isSelected, boolean hasFocus,
+                    int row, int col) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(
+                        tbl, value, isSelected, hasFocus, row, col);
+                lbl.setOpaque(true);                            // bắt buộc phải opaque
+                lbl.setBackground(new Color(0x3498DB));         // Peter River
+                lbl.setForeground(TEXT);                        // TEXT là Color bạn khai báo
+                lbl.setHorizontalAlignment(JLabel.CENTER);      // hoặc LEFT/RIGHT tuỳ ý
+                lbl.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                return lbl;
+            }
+        });
+
+        initTaskTable(user_id);
     }
 
     private void initData(int user_id) {
 
         initNoticeBoard(user_id);
-        
-      
 
     }
-     private void initTaskTable(int userId) {
+
+    private void initTaskTable(int userId) {
         // Giả sử table đã có model với 5 cột: No, Time, Task, Category, Status
-     
 
         TaskService service = new TaskService();
         LocalDate today = LocalDate.now();
@@ -65,8 +123,8 @@ public class Form_Home extends javax.swing.JPanel {
                     LocalDate d = t.getDateTime().toLocalDate();
                     return !d.isBefore(startDate) && !d.isAfter(today);
                 })
-                .sorted(Comparator.comparing((Task t) ->
-                        t.getDateTime().toLocalDate().equals(today) ? 0 : 1
+                .sorted(Comparator.comparing((Task t)
+                        -> t.getDateTime().toLocalDate().equals(today) ? 0 : 1
                 ).thenComparing(Task::getDateTime).reversed())
                 .collect(Collectors.toList());
 
@@ -79,8 +137,6 @@ public class Form_Home extends javax.swing.JPanel {
             table.addRow(new Object[]{no++, time, title, category, status});
         }
     }
-
-
 
     private void initNoticeBoard(int userId) {
 
@@ -122,7 +178,7 @@ public class Form_Home extends javax.swing.JPanel {
             noticeBoard.addDate(e.getKey().format(dateFormatter));
             for (Task task : e.getValue()) {
                 noticeBoard.addNoticeBoard(new ModelNoticeBoard(
-                        new Color(238, 46, 57),
+                        new Color(255, 0, 0),
                         task.getTitle(),
                         task.getDateTime().format(timeFormatter),
                         task.getDescription()
@@ -150,15 +206,20 @@ public class Form_Home extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(4, 72, 210));
+        jLabel1.setForeground(new java.awt.Color(26, 188, 156));
         jLabel1.setText("Dashboard / Home");
 
         jLabel5.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(127, 127, 127));
+        jLabel5.setForeground(new java.awt.Color(26, 188, 156));
         jLabel5.setText("Recent Tasks (Last 30 Days)");
 
-        spTable.setBorder(null);
+        roundPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
+        spTable.setBorder(null);
+        spTable.setForeground(new java.awt.Color(255, 204, 153));
+
+        table.setBackground(new java.awt.Color(204, 255, 204));
+        table.setForeground(new java.awt.Color(255, 255, 102));
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -175,31 +236,36 @@ public class Form_Home extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        table.setGridColor(new java.awt.Color(51, 255, 0));
+        table.setSelectionBackground(new java.awt.Color(204, 204, 0));
+        table.setSelectionForeground(new java.awt.Color(255, 204, 204));
         spTable.setViewportView(table);
 
         javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
         roundPanel1.setLayout(roundPanel1Layout);
         roundPanel1Layout.setHorizontalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 644, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
         );
         roundPanel1Layout.setVerticalGroup(
             roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+            .addComponent(spTable)
         );
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        roundPanel2.setBackground(new java.awt.Color(209, 242, 235));
+
+        jPanel1.setBackground(new java.awt.Color(209, 242, 235));
+
+        noticeBoard.setBackground(new java.awt.Color(204, 255, 0));
 
         jLabel2.setFont(new java.awt.Font("sansserif", 1, 15)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(76, 76, 76));
+        jLabel2.setForeground(new java.awt.Color(26, 188, 156));
         jLabel2.setText("Notice Board");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
+        jLabel3.setBackground(new java.awt.Color(26, 188, 156));
         jLabel3.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(105, 105, 105));
+        jLabel3.setForeground(new java.awt.Color(26, 188, 156));
         jLabel3.setText("Simple Miglayout API Doc");
         jLabel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
@@ -209,16 +275,18 @@ public class Form_Home extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(noticeBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
-                        .addGap(0, 338, Short.MAX_VALUE)))
+                        .addGap(0, 338, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(noticeBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -230,8 +298,9 @@ public class Form_Home extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addGap(9, 9, 9)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(noticeBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(noticeBoard, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
@@ -243,7 +312,6 @@ public class Form_Home extends javax.swing.JPanel {
         roundPanel2Layout.setVerticalGroup(
             roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );

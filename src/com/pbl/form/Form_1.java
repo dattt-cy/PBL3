@@ -153,6 +153,7 @@ public class Form_1 extends javax.swing.JPanel {
         jLabel2.setText("Report Monthly");
         jLabel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
+        jPanel2.setBackground(new java.awt.Color(153, 255, 102));
         jPanel2.setOpaque(false);
 
         progress2.setBackground(new java.awt.Color(132, 66, 246));

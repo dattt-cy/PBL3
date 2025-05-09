@@ -1,12 +1,14 @@
 package com.pbl.main;
 
 import com.pbl.event.EventColorChange;
+
 import com.pbl.form.Form2;
 import com.pbl.form.Form_1;
 import com.pbl.form.Form_Home;
 import com.pbl.form.Home_Form;
 import com.pbl.form.MainForm;
 import com.pbl.form.Setting_Form;
+import com.pbl.form.TakeNote;
 import com.pbl.menu.EventMenu;
 import com.pbl.properties.SystemProperties;
 import com.pbl.theme.SystemTheme;
@@ -47,6 +49,12 @@ public class Main extends javax.swing.JFrame {
                     mainBody.displayForm(new Form_Home(userID));
                 }else if (index == 3) {
                     mainBody.displayForm(settingForm, "Setting");
+                }
+                else if(index == 4){
+//                    mainBody.displayForm(new Clockk(userID));
+                }
+                else if(index == 5){
+                    mainBody.displayForm(new TakeNote(userID));
                 }
             }
         });
@@ -159,18 +167,23 @@ public class Main extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
-       
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Main(49).setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

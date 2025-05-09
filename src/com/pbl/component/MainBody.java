@@ -22,6 +22,7 @@ public class MainBody extends javax.swing.JPanel {
     }
 
     public void displayForm(Component form, String title) {
+        
         lbTitle.setText(title);
         panelBody.removeAll();
         panelBody.add(form);
