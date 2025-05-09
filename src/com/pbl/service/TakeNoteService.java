@@ -29,4 +29,11 @@ public class TakeNoteService {
     public void delete(int noteId) {
         dao.delete(noteId);
     }
+    /** Search notes by title keyword */
+    public List<Takenote> search(int userId, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return loadAll(userId);
+        }
+        return dao.findByTitleLike(userId, keyword.trim());
+    }
 }

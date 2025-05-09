@@ -69,4 +69,31 @@ public class TakeNoteDAO {
             throw new RuntimeException("Error deleting note", e);
         }
     }
+    /**
+     * Search notes by title keyword (case-insensitive)
+     * @param userId the owner
+     * @param keyword substring to search in title
+     */
+    public List<Takenote> findByTitleLike(int userId, String keyword) {
+        String sql = "SELECT id, user_id, title, content, created_at"
+                   + " FROM takenotes"
+                   + " WHERE user_id=? AND lower(title) LIKE ?"
+                   + " ORDER BY created_at DESC";
+        List<Takenote> list = new ArrayList<>();
+        try (ResultSet rs = db.getRecords(sql, userId, "%" + keyword.toLowerCase() + "%")) {
+            while (rs.next()) {
+                Takenote n = new Takenote();
+                n.setId(rs.getInt("id"));
+                n.setUserId(rs.getInt("user_id"));
+                n.setTitle(rs.getString("title"));
+                n.setContent(rs.getString("content"));
+                Timestamp ts = rs.getTimestamp("created_at");
+                if (ts != null) n.setCreatedAt(ts.toLocalDateTime());
+                list.add(n);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching notes", e);
+        }
+        return list;
+    }
 }

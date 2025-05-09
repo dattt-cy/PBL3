@@ -1,24 +1,33 @@
 
 package com.pbl.form;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.pbl.model.Takenote;
 import com.pbl.service.TakeNoteService;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class TakeNote extends JPanel {
     
     private static final Font CONTENT_FONT = 
     new Font("Segoe UI",Font.ITALIC, 14);
+    private static final Font CONTENT_FONTt = 
+    new Font("Segoe UI", Font.PLAIN,14);
     
     private final TakeNoteService takeNoteService = new TakeNoteService();
     private final DefaultListModel<Takenote> listModel = new DefaultListModel<>();
     private final JList<Takenote> listNotes = new JList<>(listModel);
     private final JTextField txtTitle   = new JTextField();
     private final JTextArea  txtContent = new JTextArea();
+    JTextField txtSearch = new JTextField();
   
     private final JLabel     lblDate    = new JLabel();
     private final JButton    btnAdd     = new JButton("+ Add");
@@ -89,12 +98,19 @@ public class TakeNote extends JPanel {
         listNotes.setCellRenderer(new TakenoteCellRenderer());
         listNotes.setBackground(new Color(230, 230, 255));
         listNotes.setFixedCellHeight(100);
-        listNotes.setFixedCellWidth(leftWidth - 30);
         JScrollPane scrollList = new JScrollPane(listNotes);
-        scrollList.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+//        scrollList.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         scrollList.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollList.setBackground(new Color(255, 240, 245));
+        scrollList.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int w = scrollList.getViewport().getWidth();
+                // 20 = tổng 2 bên padding trái + phải bạn dùng ở margins
+                listNotes.setFixedCellWidth(w - 20);
+            }
+        });
         leftPanel.add(scrollList, BorderLayout.CENTER);
 
         splitPane.setLeftComponent(leftPanel);
@@ -102,25 +118,34 @@ public class TakeNote extends JPanel {
         // RIGHT PANEL: Detail
         JPanel detailPanel = new JPanel(new BorderLayout(15, 15));
         detailPanel.setBackground(Color.WHITE);
-        detailPanel.setBorder(new RoundedBorder(20));
+        Border pad = BorderFactory.createEmptyBorder(20, 20, 20, 20);
+        Border round = new RoundedBorder(20);
+        detailPanel.setBorder(BorderFactory.createCompoundBorder(round, pad));
+
         splitPane.setRightComponent(detailPanel);
 
         // Title field rounded
+        txtTitle.setFont(CONTENT_FONT);
         txtTitle.setFont(txtTitle.getFont().deriveFont(18f));
         txtTitle.setBorder(new RoundedBorder(10));
         txtTitle.setBackground(new Color(250, 250, 255));
         detailPanel.add(txtTitle, BorderLayout.NORTH);
 
         // Content area rounded
-        txtContent.setFont(CONTENT_FONT);
         txtContent.setLineWrap(true);
         txtContent.setWrapStyleWord(true);
         txtContent.setBackground(new Color(250, 250, 255));
+        
+        txtContent.setFont(CONTENT_FONTt);
         JScrollPane contentScroll = new JScrollPane(txtContent);
-        contentScroll.setBorder(new RoundedBorder(10));
+        Border pad2   = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border round2 = new RoundedBorder(10);
+        contentScroll.setBorder(BorderFactory.createCompoundBorder(round2, pad2));
         detailPanel.add(contentScroll, BorderLayout.CENTER);
 
         // Bottom: date + buttons
+        
+        
         JPanel bottom = new JPanel(new BorderLayout(10, 0));
         bottom.setBackground(Color.WHITE);
         bottom.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
@@ -130,13 +155,47 @@ public class TakeNote extends JPanel {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         btnPanel.setBackground(Color.WHITE);
+        
+        JPanel buts = new JPanel(new GridLayout(1,2));
+        buts.setBackground(Color.WHITE);
+        
+        txtSearch.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search...");
+        txtSearch.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, new FlatSVGIcon("com/pbl/icon/search.svg"));
+        txtSearch.putClientProperty(FlatClientProperties.STYLE, ""
+                + "arc:15;"
+                + "borderWidth:0;"
+                + "focusWidth:0;"
+                + "innerFocusWidth:0;"
+                + "margin:5,20,5,20;"
+                + "background:$Panel.background");
+     
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) { filter(); }
+        @Override
+        public void removeUpdate(DocumentEvent e) { filter(); }
+        @Override
+        public void changedUpdate(DocumentEvent e) { filter(); }
+        private void filter() {
+            String key = txtSearch.getText();
+            listModel.clear();
+            takeNoteService.search(currentUserId, key)
+                           .forEach(listModel::addElement);
+        }
+    });
+        
+        buts.add(txtSearch);
+        
+           
         styleButton(btnAdd,    new Color( 66,150,242));
         styleButton(btnUpdate, new Color(123,139,245));
         styleButton(btnDelete, new Color(240,  95, 87));
+        
         btnPanel.add(btnAdd);
         btnPanel.add(btnUpdate);
         btnPanel.add(btnDelete);
-        bottom.add(btnPanel, BorderLayout.EAST);
+        buts.add(btnPanel);
+        bottom.add(buts, BorderLayout.EAST);
 
         detailPanel.add(bottom, BorderLayout.SOUTH);
     }
@@ -164,7 +223,7 @@ public class TakeNote extends JPanel {
             txtContent.setText(currentNote.getContent());
             lblDate.setText(currentNote.getCreatedAt()
                 .format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
-            btnAdd.setEnabled(false); // vô hiệu hóa nút Add khi chọn note có sẵn
+            btnAdd.setEnabled(false);
         } else {
             btnAdd.setEnabled(true);
         }
@@ -196,7 +255,7 @@ public class TakeNote extends JPanel {
                 JOptionPane.showMessageDialog(this,
                     "Bạn đã cập nhật ghi chú thành công",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                loadNotes(); Refresh();
+                loadNotes();
             } else {
                 JOptionPane.showMessageDialog(this,
                     "Vui lòng chọn ghi chú để cập nhật",

@@ -81,10 +81,6 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
         checkedIcon = new ImageIcon(getClass().getResource("/com/pbl/icon/checked.png"));
         URL url = getClass().getResource("/com/pbl/icon/alarm.png");
         
-        System.out.println("that-icon.png = " + url);
-if (url == null) {
-    throw new IllegalStateException("Không tìm thấy /com/pbl/icon/that-icon.png");
-}
         currentUserId = userID;
        buildGUI();
         Thread t = new Thread(this);

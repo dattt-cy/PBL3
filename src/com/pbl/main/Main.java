@@ -1,5 +1,6 @@
 package com.pbl.main;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import com.pbl.event.EventColorChange;
 import com.pbl.form.Clockk;
 import com.pbl.form.Form2;
@@ -16,6 +17,7 @@ import com.pbl.theme.ThemeColor;
 import com.pbl.theme.ThemeColorChange;
 import java.awt.Color;
 import java.time.LocalDate;
+import javax.swing.UIManager;
 
 public class Main extends javax.swing.JFrame {
 
@@ -54,6 +56,11 @@ public class Main extends javax.swing.JFrame {
                     mainBody.displayForm(new Clockk(userID));
                 }
                 else if(index == 5){
+                     try {
+                        UIManager.setLookAndFeel(new FlatLightLaf());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     mainBody.displayForm(new TakeNote(userID));
                 }
             }
