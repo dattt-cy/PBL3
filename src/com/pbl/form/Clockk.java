@@ -82,7 +82,7 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
         URL url = getClass().getResource("/com/pbl/icon/alarm.png");
         
         currentUserId = userID;
-       buildGUI();
+        buildGUI();
         Thread t = new Thread(this);
         t.start();
         loadIcons();
@@ -106,8 +106,8 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
      
     private void buildGUI() {
         Color ivory = new Color(255, 255, 255);
-
-        setLayout(new BorderLayout(20, 20));
+        setLayout(new FlowLayout());
+//        setLayout(new BorderLayout(20, 20));
         setBackground(ivory);
 
         JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
@@ -115,7 +115,7 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
         jLabelTitle = new JLabel("ALARM CLOCK", SwingConstants.CENTER);
         jLabelTitle.setFont(new Font("Segoe UI", Font.BOLD, 44)); 
         header.add(jLabelTitle);
-        add(header, BorderLayout.NORTH);
+       // add(header, BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridLayout(1, 2, 20, 20));
         mainPanel.setOpaque(true);
@@ -297,8 +297,20 @@ public class Clockk extends javax.swing.JPanel implements Runnable{
         musicPanel.add(musicButtons);
         mainPanel.add(musicPanel);
 
-        add(mainPanel, BorderLayout.CENTER);
-
+        //add(mainPanel, BorderLayout.CENTER);
+        
+        JSplitPane splitPane = new JSplitPane(
+        JSplitPane.VERTICAL_SPLIT,  // chia dọc (trên/dưới)
+        header,               // component phía trên
+        mainPanel               // component phía dưới
+    );
+        
+        splitPane.setResizeWeight(0.25);      // 25% cho phần trên, 75% cho phần dưới khi resize
+        splitPane.setDividerLocation(0.25);   // đặt ngay ban đầu ở 25% chiều cao
+        
+        add(splitPane);
+        
+        
         // --- Listeners ---
 
         jBListen.addActionListener(e -> {

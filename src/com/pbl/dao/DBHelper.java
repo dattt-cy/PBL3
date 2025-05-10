@@ -16,7 +16,7 @@ public class DBHelper {
     private static DBHelper instance;
     private Connection con;
 
-    private static final String URL = "jdbc:mysql://192.168.12.141:3306/schedulestudyui?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
+    private static final String URL = "jdbc:mysql://172.20.10.6:3306/schedulestudyui?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true";
     private static final String USER = "vietngao";
     private static final String PASSWORD = "123";
 
