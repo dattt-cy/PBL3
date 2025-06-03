@@ -148,7 +148,7 @@ public class TakeNote extends JPanel {
         
         JPanel bottom = new JPanel(new BorderLayout(10, 0));
         bottom.setBackground(Color.WHITE);
-        bottom.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
+        bottom.setBorder(BorderFactory.createEmptyBorder(10, 15, 15, 15));
 
         lblDate.setFont(lblDate.getFont().deriveFont(14f));
         bottom.add(lblDate, BorderLayout.WEST);
@@ -304,8 +304,10 @@ public class TakeNote extends JPanel {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(200, 200, 255));
+            g2.setStroke(new BasicStroke(2f));   // tăng độ dày đường viền
+            g2.setColor(new Color(100,100,200));
             g2.drawRoundRect(x, y, width-1, height-1, radius, radius);
+
         }
     }
 
