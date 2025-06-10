@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pbl.model;
 
 import java.time.LocalDate;
@@ -9,31 +5,27 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * @author Audreen Soh
- * <p>
- * This class implements Task object
- */
 public class Task {
+
     private int ID;
-    private int userId;   
+    private int userId;
     private String title;
     private String description;
     private String category;
     private boolean isDone;
     private LocalDateTime dateTime;
+    private int SentCount;
 
     /**
      * Class constructor.
      *
-     * @param ID          The task ID
-     * @param title       The task title
+     * @param ID The task ID
+     * @param title The task title
      * @param description The task description
-     * @param category    The task category
-     * @param isDone      The state(Done/not done) of the task
-     * @param dateTime    The date and time of the task
+     * @param category The task category
+     * @param isDone The state(Done/not done) of the task
+     * @param dateTime The date and time of the task
      */
-  
     public Task(int ID, String title, String description, String category, boolean isDone, LocalDateTime dateTime) {
         this.ID = ID;
         this.title = title;
@@ -48,7 +40,7 @@ public class Task {
      *
      * @param date The date of the task
      */
-    public Task(int userID,LocalDate date) {
+    public Task(int userID, LocalDate date) {
         this.userId = userID;
         this.dateTime = LocalDateTime.of(date, LocalTime.now());
     }
@@ -110,9 +102,7 @@ public class Task {
         this.dateTime = dateTime;
     }
 
-
     //Custom date and time getters and setters
-
     /**
      * getDate returns dateTime as a LocalDate object.
      */
@@ -156,10 +146,10 @@ public class Task {
      * @param time The string value of a time
      */
     public void setTime(String time) {
-           LocalDate oldDate = (this.dateTime != null) ? this.dateTime.toLocalDate() : LocalDate.now();
-    LocalTime newLocalTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
-    this.dateTime = LocalDateTime.of(oldDate, newLocalTime);
-      
+        LocalDate oldDate = (this.dateTime != null) ? this.dateTime.toLocalDate() : LocalDate.now();
+        LocalTime newLocalTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+        this.dateTime = LocalDateTime.of(oldDate, newLocalTime);
+
     }
 
     public int getUserId() {
@@ -177,5 +167,16 @@ public class Task {
     public void setIsDone(boolean isDone) {
         this.isDone = isDone;
     }
-    
+
+    public int getSentCount() {
+        return SentCount;
+    }
+
+    public void setSentCount(int SentCount) {
+        this.SentCount = SentCount;
+    }
+
+    public void incrementSentCount() {
+        this.SentCount++;
+    }
 }
