@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter; // Import for file filter
+import javax.swing.filechooser.FileNameExtensionFilter; 
 import java.nio.file.Files; // Import for reading text files
 import java.nio.file.Paths; // Import for reading text files
 import java.io.IOException; // Import for handling file IO exceptions
@@ -58,7 +58,7 @@ public class EventThoiKhoaBieu {
         try {
              System.loadLibrary("opencv_java4110");
         } catch (UnsatisfiedLinkError e) {
-             System.err.println("Lỗi: Không thể tải thư viện OpenCV. Đảm bảo đường dẫn thư viện đúng.");
+          //   System.err.println("Lỗi: Không thể tải thư viện OpenCV. Đảm bảo đường dẫn thư viện đúng.");
              // return; // Consider exiting
         }
 
@@ -66,7 +66,7 @@ public class EventThoiKhoaBieu {
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
 
         // Tesseract data path
-     //   String tessDataPath = "E:\\NetBeans_java\\Thoi_khoa_bieu\\src\\tessdata"; // Đường dẫn của bạn
+    
                      String tessDataPath ="E:\\NetBean\\PBL-VIET\\PBL3\\tessdata";
         // --- FILE CHOOSER SETUP ---
         JFileChooser fileChooser = new JFileChooser();
@@ -76,10 +76,10 @@ public class EventThoiKhoaBieu {
             "Ảnh (png, jpg, jpeg, bmp, gif)", "png", "jpg", "jpeg", "bmp", "gif");
         FileNameExtensionFilter txtFilter = new FileNameExtensionFilter(
             "Tệp văn bản (txt)", "txt");
-        // Add filters to the chooser
+        
         fileChooser.addChoosableFileFilter(imgFilter);
         fileChooser.addChoosableFileFilter(txtFilter);
-        // Set a default filter (optional, e.g., show text files first)
+       
         fileChooser.setFileFilter(txtFilter);
         // Allow selection of files only
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

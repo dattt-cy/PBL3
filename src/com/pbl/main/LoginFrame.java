@@ -12,7 +12,6 @@ import com.pbl.component.Register;
 import com.pbl.component.SetNewPassword;
 import com.pbl.dao.UsersDAO;
 import com.pbl.dao.UsersDAOImp;
-
 import com.pbl.form.MainForm;
 import com.pbl.model.Users;
 import com.pbl.service.AuthService;
