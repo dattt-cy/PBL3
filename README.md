@@ -58,15 +58,11 @@ Set custom alarm times to stay on top of your work schedule, with flexible music
 
 ![Smart Alarms](screenshots/alarm.png)
 
-### Listen Music
-
-Integrated music player functionality that allows users to enjoy their favorite tracks while working, providing a personalized and flexible user experience.
-
 ### Task Statistics
 
 Comprehensive task analytics featuring completion rates, overdue tasks, and pending tasks visualization. Users can track their productivity with detailed charts showing monthly progress and performance metrics.
 
-![Task Statistics](screenshots/statistics.png)
+![Task Statistics](screenshots/statictics.png)
 
 ### Settings
 
