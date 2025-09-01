@@ -1,7 +1,5 @@
 package com.pbl.menu;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGUniverse;
 import com.pbl.component.MainBody;
 import com.pbl.form.TakeNote;
 import com.pbl.swing.MenuButton;
